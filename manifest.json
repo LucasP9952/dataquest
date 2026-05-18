@@ -2,7 +2,7 @@
   "name": "DataQuest",
   "short_name": "DataQuest",
   "description": "Apprends SQL et Python en 5 min par jour",
-  "start_url": "./dataquest_v8.html",
+  "start_url": "./index.html",,
   "display": "standalone",
   "background_color": "#F2F2F7",
   "theme_color": "#F2F2F7",
