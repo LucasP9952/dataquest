@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="DataQuest">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-512.png">
+<title>DataQuest</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased}
+:root{
+  --bg:#FAFAFA;
+  --s1:#FFFFFF;
+  --s2:#F3F4F6;
+  --s3:#E5E7EB;
+  --s4:#D1D5DB;
+  --b1:rgba(0,0,0,.05);
+  --b2:rgba(0,0,0,.08);
+  --b3:rgba(0,0,0,.14);
+  --t1:#111111;
+  --t2:#6B7280;
+  --t3:#9CA3AF;
+  --acc:#5E5CE6;
+  --acc-a:rgba(94,92,230,.1);
+  --acc-b:rgba(94,92,230,.06);
+  --sql:#2563EB;
+  --sql-a:rgba(37,99,235,.1);
+  --sql-b:rgba(37,99,235,.05);
+  --py:#D97706;
+  --py-a:rgba(217,119,6,.1);
+  --py-b:rgba(217,119,6,.05);
+  --ok:#16A34A;
+  --ok-a:rgba(22,163,74,.1);
+  --ok-b:rgba(22,163,74,.16);
+  --err:#DC2626;
+  --err-a:rgba(220,38,38,.08);
+  --err-b:rgba(220,38,38,.14);
+  --gold:#D97706;
+  --r:10px;--r2:16px;--r3:22px;--nav-h:72px;
+  --shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.04);
+  --shadow2:0 2px 8px rgba(0,0,0,.06),0 8px 28px rgba(0,0,0,.07);
+  --shadow-acc:0 4px 18px rgba(94,92,230,.2);
+  font-family:"Plus Jakarta Sans",-apple-system,sans-serif;
+}
+html,body{min-height:100vh;background:var(--bg);color:var(--t1);overflow-x:hidden}
+
+/* ── FOND GRILLE NOTION ── */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(0,0,0,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,0,0,.025) 1px,transparent 1px);
+  background-size:28px 28px;
+  pointer-events:none;z-index:0;
+}
+#splash,#setup,#app,#game,#modal{position:relative;z-index:1;}
+
+/* ── SPLASH ── */
+#splash{position:fixed;inset:0;z-index:999;background:var(--s1);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .45s ease}
+#splash.out{opacity:0;pointer-events:none}
+.sp-mark{width:68px;height:68px;border-radius:19px;background:var(--acc);display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:var(--shadow-acc);opacity:0;transform:scale(.6) translateY(8px);animation:markPop .6s cubic-bezier(.34,1.56,.64,1) .25s forwards}
+.sp-name{font-size:21px;font-weight:800;letter-spacing:-.5px;margin-top:14px;opacity:0;animation:fadeUp .4s ease .78s forwards}
+.sp-tag{font-size:12px;color:var(--t3);font-weight:500;letter-spacing:.04em;margin-top:4px;opacity:0;animation:fadeUp .4s ease .96s forwards}
+.sp-bar-w{width:72px;height:2px;background:var(--s3);border-radius:99px;overflow:hidden;margin-top:40px;opacity:0;animation:fadeUp .3s ease 1.1s forwards}
+.sp-bar-f{height:100%;background:var(--acc);border-radius:99px;animation:barFill 1.5s ease 1.18s forwards;width:0}
+
+/* ── SETUP ── */
+#setup{min-height:100vh;background:var(--s1);padding:64px 24px 40px;display:none;flex-direction:column;align-items:center}
+#setup.on{display:flex}
+.su-mark{width:56px;height:56px;border-radius:16px;background:var(--acc);display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:20px;box-shadow:var(--shadow-acc)}
+.su-title{font-size:26px;font-weight:900;letter-spacing:-.6px;margin-bottom:6px;text-align:center}
+.su-sub{font-size:13px;color:var(--t2);text-align:center;line-height:1.65;margin-bottom:36px}
+.su-lbl{font-size:11px;font-weight:700;color:var(--t3);letter-spacing:.09em;text-transform:uppercase;margin-bottom:8px;width:100%;text-align:left}
+.su-input{width:100%;background:var(--s2);border:1.5px solid var(--b2);border-radius:var(--r);padding:13px 15px;color:var(--t1);font-family:"Plus Jakarta Sans",sans-serif;font-size:15px;font-weight:500;outline:none;-webkit-appearance:none;transition:border-color .2s;margin-bottom:26px}
+.su-input:focus{border-color:var(--acc)}
+.su-input::placeholder{color:var(--t3)}
+.av-grid{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:26px}
+.av{width:48px;height:48px;border-radius:50%;background:var(--s2);border:1.5px solid var(--b2);font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.18s;box-shadow:var(--shadow)}
+.av.on{border-color:var(--acc);background:var(--acc-b);transform:scale(1.1)}
+.lv-list{display:flex;flex-direction:column;gap:8px;width:100%;margin-bottom:32px}
+.lv-card{background:var(--s2);border:1.5px solid var(--b1);border-radius:var(--r2);padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:.18s}
+.lv-card.on{border-color:var(--acc);background:var(--acc-b)}
+.lv-ico{font-size:22px;flex-shrink:0}
+.lv-name{font-size:14px;font-weight:700}
+.lv-card.on .lv-name{color:var(--acc)}
+.lv-desc{font-size:12px;color:var(--t2);margin-top:2px}
+.btn-main{width:100%;padding:15px;border:none;border-radius:var(--r2);font-family:"Plus Jakarta Sans",sans-serif;font-size:15px;font-weight:800;cursor:pointer;transition:.18s;color:#fff;background:var(--acc);box-shadow:var(--shadow-acc)}
+.btn-main:active{transform:scale(.98)}
+.btn-main.sql{background:var(--sql);box-shadow:0 4px 18px rgba(37,99,235,.22)}
+.btn-main.py{background:var(--py);box-shadow:0 4px 18px rgba(217,119,6,.22)}
+.btn-main:disabled{opacity:.3;cursor:not-allowed;box-shadow:none}
+
+/* ── APP ── */
+#app{display:none;min-height:100vh;flex-direction:column}
+#app.on{display:flex}
+
+/* BOTTOM NAV */
+.bnav{position:fixed;bottom:0;left:0;right:0;height:var(--nav-h);background:rgba(255,255,255,.94);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--b1);display:flex;align-items:center;justify-content:space-around;padding:0 8px env(safe-area-inset-bottom);z-index:100}
+.bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;padding:8px 0;border:none;background:none;font-family:"Plus Jakarta Sans",sans-serif;transition:.15s}
+.bnav-btn:active{transform:scale(.88)}
+.bnav-ico{font-size:21px;line-height:1}
+.bnav-lbl{font-size:10px;font-weight:600;color:var(--t3);letter-spacing:.03em}
+.bnav-btn.act .bnav-lbl{color:var(--acc)}
+
+/* TABS */
+.tab{display:none;flex:1;flex-direction:column;padding-bottom:var(--nav-h);overflow-y:auto}
+.tab.on{display:flex}
+.tab-inner{padding:52px 20px 24px;flex:1;display:flex;flex-direction:column}
+
+/* ── HOME ── */
+.h-date{font-size:12px;font-weight:600;color:var(--t3);margin-bottom:3px;letter-spacing:.02em}
+.h-greet{font-size:24px;font-weight:900;letter-spacing:-.5px;margin-bottom:22px}
+.h-greet span{color:var(--acc)}
+
+/* STREAK + STATS ROW */
+.home-stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:18px}
+.hs-card{background:var(--s1);border-radius:var(--r2);padding:14px 12px;text-align:center;box-shadow:var(--shadow);border:1px solid var(--b1)}
+.hs-v{font-size:22px;font-weight:900;letter-spacing:-.5px;margin-bottom:3px}
+.hs-l{font-size:10px;font-weight:600;color:var(--t3);letter-spacing:.03em}
+
+/* MODE SEG */
+.mode-seg{display:flex;background:var(--s3);border-radius:99px;padding:3px;margin-bottom:12px}
+.ms-btn{flex:1;padding:10px;border-radius:99px;border:none;font-family:"Plus Jakarta Sans",sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:.2s;color:var(--t2);background:transparent;display:flex;align-items:center;justify-content:center;gap:6px}
+.ms-btn.act-sql{background:var(--s1);color:var(--sql);box-shadow:var(--shadow)}
+.ms-btn.act-py{background:var(--s1);color:var(--py);box-shadow:var(--shadow)}
+
+/* TIERS */
+.tiers-scroll{display:flex;gap:5px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;margin-bottom:14px}
+.tiers-scroll::-webkit-scrollbar{display:none}
+.tier-pill{flex-shrink:0;padding:5px 11px;border-radius:99px;font-size:11px;font-weight:700;background:var(--s1);border:1px solid var(--b2);color:var(--t3);box-shadow:var(--shadow)}
+.tier-pill.done{background:var(--ok-a);color:var(--ok);border-color:rgba(22,163,74,.2)}
+.tier-pill.cur{background:var(--acc);color:#fff;border-color:var(--acc);box-shadow:0 2px 10px rgba(94,92,230,.22)}
+
+/* ── STATS TAB ── */
+/* Stats hero — gris très foncé #1C1C1E */
+.stats-hero{background:#1C1C1E;border-radius:var(--r3);padding:22px;margin-bottom:14px;color:#fff;box-shadow:var(--shadow2)}
+.sh-label{font-size:11px;font-weight:600;opacity:.4;letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px}
+.sh-elo{font-size:46px;font-weight:900;letter-spacing:-2px;margin-bottom:3px}
+.sh-tier{font-size:13px;font-weight:600;opacity:.45}
+.sh-bar-w{background:rgba(255,255,255,.12);border-radius:99px;height:3px;overflow:hidden;margin-top:16px}
+.sh-bar-f{height:100%;background:#fff;border-radius:99px;transition:width 1s ease}
+.sh-bar-labels{display:flex;justify-content:space-between;font-size:10px;font-weight:600;opacity:.35;margin-top:5px}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px}
+.sg{background:var(--s1);border-radius:var(--r2);padding:16px;box-shadow:var(--shadow);border:1px solid var(--b1)}
+.sg-v{font-size:24px;font-weight:900;letter-spacing:-.8px;margin-bottom:3px}
+.sg-l{font-size:12px;font-weight:600;color:var(--t2)}
+.elo-chart-card{background:var(--s1);border-radius:var(--r2);padding:18px;margin-bottom:14px;box-shadow:var(--shadow);border:1px solid var(--b1)}
+.chart-title{font-size:13px;font-weight:700;margin-bottom:16px;color:var(--t1)}
+.act-card{background:var(--s1);border-radius:var(--r2);padding:18px;box-shadow:var(--shadow);border:1px solid var(--b1)}
+.act-bars{display:flex;align-items:flex-end;gap:6px;height:68px;margin-top:14px}
+.act-bw{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.act-bo{flex:1;width:100%;display:flex;align-items:flex-end;border-radius:6px;overflow:hidden;background:var(--s2)}
+.act-bi{width:100%;border-radius:6px;transition:height .7s ease}
+.act-bi.sql{background:var(--sql)}.act-bi.py{background:var(--py)}.act-bi.none{background:var(--s3)}
+.act-d{font-size:9px;font-weight:600;color:var(--t3)}
+.act-d.tod{color:var(--acc);font-weight:700}
+
+/* ── PROFIL ── */
+.prof-hero{background:var(--s1);border-radius:var(--r3);padding:22px;margin-bottom:14px;box-shadow:var(--shadow2);border:1px solid var(--b1)}
+.ph-row{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.ph-av{font-size:44px}
+.ph-name{font-size:20px;font-weight:800;letter-spacing:-.4px}
+.ph-sub{font-size:13px;color:var(--t2);margin-top:2px}
+.ph-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.ph-sv{font-size:20px;font-weight:900;letter-spacing:-.5px}
+.ph-sl{font-size:11px;color:var(--t2);margin-top:2px}
+.sec-lbl{font-size:11px;font-weight:700;color:var(--t3);letter-spacing:.09em;text-transform:uppercase;margin-bottom:9px;padding-left:2px}
+.prof-list{background:var(--s1);border-radius:var(--r2);overflow:hidden;box-shadow:var(--shadow);margin-bottom:14px;border:1px solid var(--b1)}
+.pl-row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--b1)}
+.pl-row:last-child{border-bottom:none}
+.pl-l{font-size:14px;font-weight:600}
+.pl-r{font-size:14px;font-weight:700;color:var(--t2)}
+.pl-r.hi{color:var(--acc)}
+.badge-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.bdg{background:var(--s1);border:1.5px solid var(--b1);border-radius:var(--r);padding:12px 8px;text-align:center;box-shadow:var(--shadow);transition:.2s}
+.bdg.on{border-color:var(--ok);background:var(--ok-a)}
+.bdg-i{font-size:19px;margin-bottom:4px}
+.bdg-l{font-size:9px;font-weight:700;color:var(--t3);letter-spacing:.03em}
+.bdg.on .bdg-l{color:var(--ok)}
+.btn-danger{width:100%;padding:13px;border:1.5px solid var(--err);border-radius:var(--r2);background:transparent;font-family:"Plus Jakarta Sans",sans-serif;font-size:14px;font-weight:600;color:var(--err);cursor:pointer}
+
+/* ── GAME ── */
+#game{position:fixed;inset:0;z-index:90;background:var(--bg);display:none;flex-direction:column;transform:translateY(100%);transition:transform .32s cubic-bezier(.4,0,.2,1)}
+#game.on{display:flex}
+#game.up{transform:translateY(0)}
+
+/* GAME NAV — ELO en grand ici */
+.gn{padding:52px 20px 0;display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.gn-back{background:var(--s1);border:1px solid var(--b2);border-radius:9px;padding:8px 13px;font-family:"Plus Jakarta Sans",sans-serif;font-size:13px;font-weight:600;color:var(--t2);cursor:pointer;flex-shrink:0;box-shadow:var(--shadow)}
+.gn-back:active{opacity:.6}
+.gn-center{flex:1;text-align:center;position:relative}
+.gn-elo{font-size:28px;font-weight:900;letter-spacing:-1px;transition:color .25s}
+.gn-elo.ok-f{color:var(--ok)}
+.gn-elo.err-f{color:var(--err)}
+.gn-elo-lbl{font-size:10px;font-weight:700;color:var(--t3);letter-spacing:.09em;text-transform:uppercase;margin-top:1px}
+.gn-combo{font-size:13px;font-weight:700;padding:6px 12px;border-radius:99px;flex-shrink:0;font-family:"JetBrains Mono",monospace;background:var(--acc-b);border:1px solid var(--acc-a);color:var(--acc);min-width:54px;text-align:center}
+.gn-combo.pop{animation:comboPop .25s ease}
+
+/* FIRE MODE */
+.fire-banner{display:none;position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:11px;font-weight:800;color:var(--err);white-space:nowrap;animation:slideUp .3s ease}
+.fire-mode .fire-banner{display:block}
+.fire-mode .gn-combo{background:rgba(220,38,38,.1);border-color:rgba(220,38,38,.25);color:var(--err)}
+.fire-mode .s-dot.ok{background:var(--err)}
+.fire-mode .s-dot.cur{background:var(--err)}
+
+/* SERIES DOTS */
+.s-row{padding:0 20px;margin-bottom:14px;display:flex;gap:4px;flex-wrap:wrap}
+.s-dot{width:7px;height:7px;border-radius:50%;background:var(--s3);flex-shrink:0;transition:.3s}
+.s-dot.ok{background:var(--ok)}
+.s-dot.err{background:var(--err)}
+.s-dot.cur{background:var(--acc);animation:dotPulse 1.5s ease infinite}
+
+/* QUESTION ZONE */
+.q-zone{padding:0 20px 16px;flex:1;display:flex;flex-direction:column;overflow-y:auto;gap:0}
+.q-meta{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.q-tag{font-size:11px;font-weight:700;padding:4px 9px;border-radius:99px}
+.q-tag.sql{background:var(--sql-a);color:var(--sql)}
+.q-tag.py{background:var(--py-a);color:var(--py)}
+.q-elo-tag{font-size:11px;font-weight:600;color:var(--t3);font-family:"JetBrains Mono",monospace}
+.q-title{font-size:19px;font-weight:800;letter-spacing:-.3px;line-height:1.28;margin-bottom:7px}
+.q-desc{font-size:13.5px;color:var(--t2);line-height:1.65;margin-bottom:10px}
+.q-desc strong{color:var(--t1);font-weight:700}
+.q-ctx{background:var(--s1);border-radius:var(--r);padding:10px 12px;margin-bottom:10px;font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--t2);line-height:1.65;white-space:pre-wrap;overflow-x:auto;border-left:2px solid var(--acc);box-shadow:var(--shadow);word-break:break-word}
+.q-ctx.sql{border-left-color:var(--sql)}
+.q-ctx.py{border-left-color:var(--py)}
+
+/* 2x2 OPTIONS — plus hautes */
+.opts-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;flex:1}
+.opt{background:var(--s1);border:1.5px solid var(--b2);border-radius:var(--r2);padding:14px 12px 11px;cursor:pointer;font-family:"Plus Jakarta Sans",sans-serif;font-size:13px;font-weight:600;line-height:1.5;text-align:left;color:var(--t1);width:100%;height:auto;min-height:110px;display:flex;flex-direction:column;justify-content:space-between;transition:border-color .14s,background .14s;opacity:0;transform:translateY(8px) scale(.97);box-shadow:var(--shadow);word-break:break-word;overflow-wrap:break-word;white-space:pre-wrap}
+.opt.vis{opacity:1;transform:translateY(0) scale(1);transition:opacity .2s ease,transform .2s ease,border-color .14s,background .14s}
+.opt-lbl{font-size:9px;font-weight:800;color:var(--t3);letter-spacing:.07em;align-self:flex-end;font-family:"JetBrains Mono",monospace;margin-top:8px;flex-shrink:0}
+.opt-txt{flex:1;display:flex;align-items:flex-start;padding-right:2px;padding-top:2px;word-break:break-word;overflow-wrap:break-word;white-space:pre-wrap}
+.opt:active{transform:scale(.97)!important}
+.opt.picked{border-color:var(--acc);background:var(--acc-b)}
+.opt.picked .opt-lbl{color:var(--acc)}
+.opt.correct{border-color:var(--ok)!important;background:var(--ok-b)!important;animation:popIn .28s ease;box-shadow:0 0 0 2px var(--ok)}
+.opt.correct .opt-lbl,.opt.correct .opt-txt{color:var(--ok)!important;font-weight:700!important}
+.opt.wrong{border-color:var(--err)!important;background:var(--err-a)!important;animation:shake .3s ease}
+.opt.wrong .opt-lbl,.opt.wrong .opt-txt{color:var(--err)!important}
+.opt:disabled{cursor:not-allowed}
+
+/* FEEDBACK */
+.feedback{display:none;border-radius:var(--r2);padding:12px 14px;margin-bottom:10px;animation:slideUp .22s ease}
+.feedback.ok{display:block;background:var(--ok-a);border:1px solid rgba(22,163,74,.2)}
+.feedback.ko{display:block;background:var(--err-a);border:1px solid rgba(220,38,38,.18)}
+.fb-head{font-size:14px;font-weight:800;margin-bottom:4px}
+.feedback.ok .fb-head{color:var(--ok)}
+.feedback.ko .fb-head{color:var(--err)}
+.fb-body{font-size:13px;color:var(--t2);line-height:1.62}
+.fb-elo{font-size:13px;font-weight:800;margin-top:7px;font-family:"JetBrains Mono",monospace}
+.feedback.ok .fb-elo{color:var(--ok)}
+.feedback.ko .fb-elo{color:var(--err)}
+
+/* BTNS */
+.btn-verify{width:100%;padding:14px;border:none;border-radius:var(--r2);font-family:"Plus Jakarta Sans",sans-serif;font-size:15px;font-weight:800;cursor:pointer;transition:.18s;color:#fff}
+.btn-verify:active{transform:scale(.98)}
+.btn-verify:disabled{opacity:.25;cursor:not-allowed;box-shadow:none}
+.btn-verify.sql{background:var(--sql);box-shadow:0 3px 14px rgba(37,99,235,.22)}
+.btn-verify.py{background:var(--py);box-shadow:0 3px 14px rgba(217,119,6,.2)}
+.btn-next{display:block;width:100%;margin-top:8px;padding:12px;border:1.5px solid var(--b2);border-radius:var(--r2);background:var(--s1);color:var(--t1);font-family:"Plus Jakarta Sans",sans-serif;font-size:14px;font-weight:700;cursor:pointer;box-shadow:var(--shadow)}
+.btn-next:active{opacity:.7}
+
+/* ELO ANIMATION */
+@keyframes eloCount{0%{opacity:.6;transform:scale(.95)}100%{opacity:1;transform:scale(1)}}
+.elo-anim{animation:eloCount .15s ease}
+
+/* TOAST / CONFETTI / MODAL */
+.toast{position:fixed;top:44%;left:50%;transform:translate(-50%,-50%);font-size:18px;font-weight:800;padding:10px 20px;border-radius:99px;pointer-events:none;z-index:998;display:none;color:#fff;letter-spacing:-.2px;font-family:"JetBrains Mono",monospace}
+.cw{position:fixed;inset:0;pointer-events:none;z-index:999;overflow:hidden}
+.cf{position:absolute;top:-10px;width:6px;height:6px;border-radius:2px;animation:cfFall linear forwards}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;display:none;align-items:center;justify-content:center;padding:22px}
+.overlay.on{display:flex;animation:fadeIn .22s}
+.modal{background:var(--s1);border-radius:var(--r3);padding:32px 24px;text-align:center;width:100%;max-width:320px;box-shadow:0 20px 60px rgba(0,0,0,.12);border:1px solid var(--b1)}
+.m-ico{font-size:52px;margin-bottom:14px;animation:popIn .5s ease}
+.m-title{font-size:22px;font-weight:800;letter-spacing:-.4px;margin-bottom:7px;color:var(--acc)}
+.m-body{font-size:13px;color:var(--t2);line-height:1.65;margin-bottom:22px}
+.m-btn{width:100%;padding:14px;border:none;border-radius:var(--r2);background:var(--acc);color:#fff;font-family:"Plus Jakarta Sans",sans-serif;font-size:14px;font-weight:700;cursor:pointer;box-shadow:var(--shadow-acc)}
+
+@keyframes markPop{to{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+@keyframes barFill{to{width:100%}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+@keyframes popIn{0%{transform:scale(.8)}60%{transform:scale(1.07)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+@keyframes cfFall{to{transform:translateY(110vh) rotate(540deg);opacity:0}}
+@keyframes dotPulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes comboPop{0%{transform:scale(1)}50%{transform:scale(1.18)}100%{transform:scale(1)}}
+@keyframes toastAnim{0%{opacity:0;transform:translate(-50%,-65%)}15%{opacity:1;transform:translate(-50%,-50%)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-38%)}}
+</style>
+
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="sp-mark">⚡</div>
+  <div class="sp-name">DataQuest</div>
+  <div class="sp-tag">SQL · Python · ELO</div>
+  <div class="sp-bar-w"><div class="sp-bar-f"></div></div>
+</div>
+
+<!-- SETUP -->
+<div id="setup">
+  <div class="su-mark">⚡</div>
+  <div class="su-title">Créer ton profil</div>
+  <div class="su-sub">Deux ELO indépendants :<br>SQL et Python.</div>
+  <div class="su-lbl">Prénom</div>
+  <input class="su-input" id="su-name" type="text" placeholder="Ex : Alex" maxlength="20">
+  <div class="su-lbl">Avatar</div>
+  <div class="av-grid">
+    <div class="av on" data-av="🦊" onclick="pickAv(this)">🦊</div>
+    <div class="av" data-av="🐼" onclick="pickAv(this)">🐼</div>
+    <div class="av" data-av="🦁" onclick="pickAv(this)">🦁</div>
+    <div class="av" data-av="🐸" onclick="pickAv(this)">🐸</div>
+    <div class="av" data-av="🤖" onclick="pickAv(this)">🤖</div>
+    <div class="av" data-av="🦄" onclick="pickAv(this)">🦄</div>
+    <div class="av" data-av="🐙" onclick="pickAv(this)">🐙</div>
+    <div class="av" data-av="🎯" onclick="pickAv(this)">🎯</div>
+  </div>
+  <div style="background:var(--acc-b);border:1px solid var(--acc-a);border-radius:var(--r2);padding:14px 16px;margin-bottom:24px;display:flex;align-items:center;gap:10px">
+    <div style="font-size:22px">🏆</div>
+    <div>
+      <div style="font-size:13px;font-weight:700;color:var(--acc)">Tout le monde commence à ELO 400</div>
+      <div style="font-size:12px;color:var(--t2);margin-top:2px">Prouve ta valeur en montant dans les rangs</div>
+    </div>
+  </div>
+  <button class="btn-main" onclick="setupDone()">Commencer à ELO 400 →</button>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <!-- HOME — ELO retiré, focus sur le jeu -->
+  <div class="tab on" id="tab-home">
+    <div class="tab-inner">
+      <!-- GREETING -->
+      <div style="margin-bottom:24px">
+        <div class="h-date" id="h-date"></div>
+        <div class="h-greet">Bonjour, <span id="h-name">Alex</span> 👋</div>
+      </div>
+
+      <!-- STATS LÉGÈRES -->
+      <div class="home-stats-row" style="margin-bottom:28px">
+        <div class="hs-card">
+          <div class="hs-v" id="h-streak" style="color:var(--gold)">0 🔥</div>
+          <div class="hs-l">Streak</div>
+        </div>
+        <div class="hs-card">
+          <div class="hs-v" id="h-total" style="color:var(--acc)">0</div>
+          <div class="hs-l">Résolues</div>
+        </div>
+        <div class="hs-card">
+          <div class="hs-v" id="h-best" style="color:var(--ok)">0</div>
+          <div class="hs-l">Best série</div>
+        </div>
+      </div>
+
+      <!-- TIERS -->
+      <div style="margin-bottom:28px">
+        <div style="font-size:11px;font-weight:700;color:var(--t3);letter-spacing:.09em;text-transform:uppercase;margin-bottom:10px">Ton rang actuel</div>
+        <div class="tiers-scroll" id="tiers-row"></div>
+      </div>
+
+      <!-- DIVIDER -->
+      <div style="height:1px;background:var(--b1);margin-bottom:28px"></div>
+
+      <!-- MODE + JOUER -->
+      <div style="margin-bottom:0">
+        <div style="font-size:11px;font-weight:700;color:var(--t3);letter-spacing:.09em;text-transform:uppercase;margin-bottom:10px">Choisir la matière</div>
+        <div class="mode-seg" style="margin-bottom:16px">
+          <button class="ms-btn act-sql" id="ms-sql" onclick="setMode('sql')">🗄️ SQL</button>
+          <button class="ms-btn" id="ms-py" onclick="setMode('py')">🐍 Python</button>
+        </div>
+        <button class="btn-main sql" id="btn-play" onclick="startGame()" style="padding:18px;font-size:16px">Jouer →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="tab" id="tab-stats">
+    <div class="tab-inner">
+      <!-- 6 mini-cards EN HAUT -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:14px">
+        <div class="sg" style="border-top:2px solid var(--sql)">
+          <div class="sg-v" id="st-sql" style="color:var(--sql);font-size:20px">400</div>
+          <div class="sg-l">ELO SQL</div>
+          <div style="font-size:10px;color:var(--t3);margin-top:1px" id="st-sql-max">Max 400</div>
+        </div>
+        <div class="sg" style="border-top:2px solid var(--py)">
+          <div class="sg-v" id="st-py" style="color:var(--py);font-size:20px">400</div>
+          <div class="sg-l">ELO Python</div>
+          <div style="font-size:10px;color:var(--t3);margin-top:1px" id="st-py-max">Max 400</div>
+        </div>
+        <div class="sg" style="border-top:2px solid var(--gold)">
+          <div class="sg-v" id="st-streak" style="color:var(--gold);font-size:20px">0</div>
+          <div class="sg-l">Streak 🔥</div>
+        </div>
+        <div class="sg">
+          <div class="sg-v" id="st-sessions" style="color:var(--acc);font-size:20px">0</div>
+          <div class="sg-l">Sessions</div>
+        </div>
+        <div class="sg">
+          <div class="sg-v" id="st-correct" style="color:var(--ok);font-size:20px">0</div>
+          <div class="sg-l">Correctes</div>
+        </div>
+        <div class="sg">
+          <div class="sg-v" id="st-acc" style="color:var(--t2);font-size:20px">—</div>
+          <div class="sg-l">Précision</div>
+        </div>
+      </div>
+
+      <!-- CARD NOIRE AU CENTRE — mise en valeur -->
+      <div class="stats-hero" style="margin-bottom:14px">
+        <div class="sh-label">ELO Global</div>
+        <div class="sh-elo" id="st-elo">400</div>
+        <div class="sh-tier" id="st-tier">Puzzle Rookie</div>
+        <div class="sh-bar-w"><div class="sh-bar-f" id="st-bar" style="width:0%"></div></div>
+        <div class="sh-bar-labels"><span>400</span><span>1000</span></div>
+      </div>
+      <div class="elo-chart-card">
+        <div class="chart-title">Progression ELO</div>
+        <div id="elo-chart-wrap"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PROFIL -->
+  <div class="tab" id="tab-profil">
+    <div class="tab-inner">
+      <div class="prof-hero">
+        <div class="ph-row">
+          <div class="ph-av" id="pr-av">🦊</div>
+          <div>
+            <div class="ph-name" id="pr-name">Alex</div>
+            <div class="ph-sub" id="pr-sub">Puzzle Rookie</div>
+          </div>
+        </div>
+        <div class="ph-stats">
+          <div><div class="ph-sv" id="pr-sql" style="color:var(--sql)">400</div><div class="ph-sl">ELO SQL</div></div>
+          <div><div class="ph-sv" id="pr-py" style="color:var(--py)">400</div><div class="ph-sl">ELO Python</div></div>
+          <div><div class="ph-sv" id="pr-best" style="color:var(--ok)">0</div><div class="ph-sl">Best série</div></div>
+        </div>
+      </div>
+      <div class="sec-lbl">Informations</div>
+      <div class="prof-list">
+        <div class="pl-row"><div class="pl-l">ELO SQL max</div><div class="pl-r hi" id="pr-sql-max">400</div></div>
+        <div class="pl-row"><div class="pl-l">ELO Python max</div><div class="pl-r hi" id="pr-py-max">400</div></div>
+        <div class="pl-row"><div class="pl-l">Questions résolues</div><div class="pl-r" id="pr-solved">0</div></div>
+        <div class="pl-row"><div class="pl-l">Sessions</div><div class="pl-r" id="pr-sessions">0</div></div>
+        <div class="pl-row"><div class="pl-l">Streak</div><div class="pl-r" id="pr-streak">0 🔥</div></div>
+      </div>
+      <div class="sec-lbl">Succès</div>
+      <div class="badge-grid">
+        <div class="bdg" id="bd0"><div class="bdg-i">⚡</div><div class="bdg-l">SQL 600</div></div>
+        <div class="bdg" id="bd1"><div class="bdg-i">🐍</div><div class="bdg-l">Py 600</div></div>
+        <div class="bdg" id="bd2"><div class="bdg-i">📊</div><div class="bdg-l">SQL 800</div></div>
+        <div class="bdg" id="bd3"><div class="bdg-i">🔥</div><div class="bdg-l">Py 800</div></div>
+        <div class="bdg" id="bd4"><div class="bdg-i">🏆</div><div class="bdg-l">ELO 1000</div></div>
+        <div class="bdg" id="bd5"><div class="bdg-i">🎯</div><div class="bdg-l">Série 10</div></div>
+        <div class="bdg" id="bd6"><div class="bdg-i">🌟</div><div class="bdg-l">Série 20</div></div>
+        <div class="bdg" id="bd7"><div class="bdg-i">🧠</div><div class="bdg-l">50 résolues</div></div>
+        <div class="bdg" id="bd8"><div class="bdg-i">💎</div><div class="bdg-l">100 résolues</div></div>
+        <div class="bdg" id="bd9"><div class="bdg-i">🔥</div><div class="bdg-l">7 jours</div></div>
+        <div class="bdg" id="bd10"><div class="bdg-i">🎖️</div><div class="bdg-l">30 jours</div></div>
+        <div class="bdg" id="bd11"><div class="bdg-i">👑</div><div class="bdg-l">Master</div></div>
+      </div>
+      <button class="btn-danger" onclick="confirmReset()">Réinitialiser le profil</button>
+    </div>
+  </div>
+
+  <nav class="bnav">
+    <button class="bnav-btn act" id="nav-home" onclick="switchTab('home')"><div class="bnav-ico">🏠</div><div class="bnav-lbl">Accueil</div></button>
+    <button class="bnav-btn" id="nav-stats" onclick="switchTab('stats')"><div class="bnav-ico">📈</div><div class="bnav-lbl">Stats</div></button>
+    <button class="bnav-btn" id="nav-profil" onclick="switchTab('profil')"><div class="bnav-ico">👤</div><div class="bnav-lbl">Profil</div></button>
+  </nav>
+</div>
+
+<!-- GAME — ELO en grand, c'est son habitat naturel -->
+<div id="game">
+  <div class="gn">
+    <button class="gn-back" onclick="quitGame()">←</button>
+    <div class="gn-center">
+      <div class="fire-banner" id="fire-banner">🔥 En feu !</div>
+      <div class="gn-elo" id="gn-elo">400</div>
+      <div class="gn-elo-lbl" id="gn-elo-lbl">ELO SQL</div>
+    </div>
+    <div class="gn-combo" id="gn-combo">✦ 0</div>
+  </div>
+  <div class="s-row" id="s-row"></div>
+  <div class="q-zone">
+    <div class="q-meta">
+      <div class="q-tag sql" id="q-tag">SQL</div>
+      <div class="q-elo-tag" id="q-elo-tag">ELO 500</div>
+    </div>
+    <div class="q-title" id="q-title"></div>
+    <div class="q-desc" id="q-desc"></div>
+    <div class="q-ctx" id="q-ctx" style="display:none"></div>
+    <div class="opts-grid">
+      <button class="opt" id="o0" onclick="pick(0)"><div class="opt-txt" id="ot0"></div><div class="opt-lbl">A</div></button>
+      <button class="opt" id="o1" onclick="pick(1)"><div class="opt-txt" id="ot1"></div><div class="opt-lbl">B</div></button>
+      <button class="opt" id="o2" onclick="pick(2)"><div class="opt-txt" id="ot2"></div><div class="opt-lbl">C</div></button>
+      <button class="opt" id="o3" onclick="pick(3)"><div class="opt-txt" id="ot3"></div><div class="opt-lbl">D</div></button>
+    </div>
+    <div class="feedback" id="feedback">
+      <div class="fb-head" id="fb-head"></div>
+      <div class="fb-body" id="fb-body"></div>
+      <div class="fb-elo" id="fb-elo"></div>
+    </div>
+    <button class="btn-verify sql" id="btn-verify" onclick="verify()">Vérifier</button>
+    <button class="btn-next" id="btn-next" onclick="skipQ()">Passer →</button>
+  </div>
+</div>
+
+<div class="cw" id="cw"></div>
+<div class="toast" id="toast"></div>
+<div class="overlay" id="modal">
+  <div class="modal">
+    <div class="m-ico" id="m-ico">⚡</div>
+    <div class="m-title" id="m-title">Nouveau rang !</div>
+    <div class="m-body" id="m-body"></div>
+    <button class="m-btn" onclick="closeModal()">Continuer →</button>
+  </div>
+</div>
+
+<script>
+
+// ══════════════════════════════════════════
+// ELO SYSTEM
+// ══════════════════════════════════════════
+const TIERS=[
+  {name:'Puzzle Rookie', min:0,   max:600},
+  {name:'Apprenti Data', min:600, max:750},
+  {name:'Analyste',      min:750, max:850},
+  {name:'Expert',        min:850, max:950},
+  {name:'Master',        min:950, max:1000},
+];
+const ELO_INIT={novice:400,apprenti:600,expert:800};
+const DAYS=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+const getTier=elo=>TIERS.slice().reverse().find(t=>elo>=t.min)||TIERS[0];
+// Helper sécurisé — évite Cannot set properties of null
+function setEl(id, val){const el=document.getElementById(id);if(el)el.textContent=val;}
+function setElHTML(id, val){const el=document.getElementById(id);if(el)el.innerHTML=val;}
+function setElStyle(id, prop, val){const el=document.getElementById(id);if(el)el.style[prop]=val;}
+function setElClass(id, cls){const el=document.getElementById(id);if(el)el.className=cls;}
+
+const cap=s=>s?s[0].toUpperCase()+s.slice(1):'';
+function getK(n){return n<20?64:n<50?32:16;}
+function calcElo(playerElo,qElo,won,n){
+  const K=getK(n);
+  const exp=1/(1+Math.pow(10,(qElo-playerElo)/400));
+  return Math.round(playerElo+K*((won?1:0)-exp));
+}
+
+// ── ANIMATED ELO COUNTER ──
+function animateElo(elId,from,to,duration){
+  const el=document.getElementById(elId);
+  if(!el)return;
+  const start=performance.now();
+  const diff=to-from;
+  function step(now){
+    const t=Math.min(1,(now-start)/duration);
+    const ease=t<.5?2*t*t:(4-2*t)*t-1;
+    const cur=Math.round(from+diff*ease);
+    el.textContent=cur;
+    el.classList.add('elo-counting');
+    setTimeout(()=>el.classList.remove('elo-counting'),120);
+    if(t<1)requestAnimationFrame(step);
+    else el.textContent=to;
+  }
+  requestAnimationFrame(step);
+}
+
+// ══════════════════════════════════════════
+// DATABASE
+// ══════════════════════════════════════════
+const DB=[
+// ════════ SQL ════════
+// ── SELECT / FROM / bases (ELO 400-550) ──
+{id:'s01',elo:400,mode:'sql',title:'Afficher tout',desc:'Quelle requête affiche <strong>toutes les colonnes</strong> de la table clients ?',ctx:null,options:['SELECT * FROM clients','GET ALL FROM clients','SHOW clients','FETCH * clients'],correct:0,expl:'SELECT * FROM table est la requête fondamentale. * = toutes les colonnes.'},
+{id:'s02',elo:410,mode:'sql',title:'Colonnes spécifiques',desc:'Comment afficher uniquement le <strong>nom et email</strong> des clients ?',ctx:'TABLE clients : id, nom, email, ville, age',options:['SELECT nom, email FROM clients','SELECT [nom, email] FROM clients','GET nom, email FROM clients','SELECT nom AND email FROM clients'],correct:0,expl:'On liste les colonnes séparées par des virgules après SELECT.'},
+{id:'s03',elo:420,mode:'sql',title:'Alias de colonne',desc:'Comment renommer la colonne montant en <strong>total</strong> dans les résultats ?',ctx:null,options:['SELECT montant AS total FROM commandes','SELECT montant = total FROM commandes','RENAME montant total FROM commandes','SELECT montant CALLED total FROM commandes'],correct:0,expl:'AS crée un alias. Valable pour les colonnes et les tables. Très utilisé pour la lisibilité.'},
+{id:'s04',elo:430,mode:'sql',title:'Trier croissant',desc:'Affiche les produits triés par <strong>prix croissant</strong>.',ctx:'TABLE produits : id, nom, prix',options:['SELECT * FROM produits SORT BY prix','SELECT * FROM produits ORDER prix ASC','SELECT * FROM produits ORDER BY prix ASC','SELECT * FROM produits RANK BY prix ASC'],correct:2,expl:'ORDER BY col ASC trie du plus petit au plus grand. ASC est le défaut.'},
+{id:'s05',elo:440,mode:'sql',title:'Trier décroissant',desc:'Affiche les employés du <strong>salaire le plus élevé au plus bas</strong>.',ctx:'TABLE employes : id, nom, salaire',options:['ORDER BY salaire ASC','ORDER BY salaire DESC','SORT BY salaire DOWN','ORDER BY -salaire'],correct:1,expl:'DESC = décroissant. Très utilisé pour afficher les "top N" valeurs.'},
+{id:'s06',elo:450,mode:'sql',title:'Limiter les résultats',desc:'Affiche uniquement les <strong>5 premières</strong> lignes.',ctx:null,options:['SELECT TOP 5 * FROM table','SELECT * FROM table LIMIT 5','SELECT FIRST 5 * FROM table','SELECT * FROM table MAX 5'],correct:1,expl:'LIMIT n restreint le nombre de lignes. Toujours utilisé avec ORDER BY pour avoir un sens.'},
+{id:'s07',elo:460,mode:'sql',title:'DISTINCT',desc:'Affiche les <strong>villes uniques</strong> sans doublons.',ctx:'TABLE clients : id, nom, ville',options:['SELECT UNIQUE ville FROM clients','SELECT DISTINCT ville FROM clients','SELECT ONLY ville FROM clients','SELECT ville NO DUPLICATES FROM clients'],correct:1,expl:'DISTINCT élimine les doublons. Utile pour voir les valeurs uniques d-une colonne.'},
+{id:'s08',elo:470,mode:'sql',title:'Filtrer avec WHERE',desc:'Affiche les clients dont la ville est <strong>Lyon</strong>.',ctx:'TABLE clients : id, nom, ville',options:["SELECT * FROM clients WHERE ville = 'Lyon'","SELECT * FROM clients IF ville = 'Lyon'","SELECT * FROM clients FILTER ville = 'Lyon'","SELECT * FROM clients HAVING ville = 'Lyon'"],correct:1,expl:'WHERE filtre les lignes. Les chaînes de texte s-écrivent entre guillemets simples en SQL.'},
+{id:'s09',elo:480,mode:'sql',title:'Condition numérique',desc:'Affiche les produits dont le <strong>prix est supérieur à 50</strong>.',ctx:'TABLE produits : id, nom, prix',options:['WHERE prix > 50','WHERE prix = 50+','WHERE prix OVER 50','WHERE prix GREATER 50'],correct:1,expl:'> strictement supérieur, >= supérieur ou égal. < inférieur, <= inférieur ou égal.'},
+{id:'s10',elo:490,mode:'sql',title:'WHERE texte',desc:'Trouver les employés dont le <strong>département est Ventes</strong>.',ctx:'TABLE employes : id, nom, departement',options:["WHERE departement = 'Ventes'","WHERE departement IS 'Ventes'","WHERE departement LIKE 'Ventes'","WHERE departement EQUALS 'Ventes'"],correct:0,expl:'= pour une égalité exacte. LIKE avec % pour les patterns (ex: WHERE nom LIKE \'A%\' = commence par A).'},
+{id:'s11',elo:500,mode:'sql',title:'AND / OR',desc:'Clients de Paris <strong>ET</strong> de plus de 30 ans.',ctx:null,options:["WHERE ville = 'Paris' AND age > 30","WHERE ville = 'Paris' PLUS age > 30","WHERE ville = 'Paris', age > 30","WHERE ville = 'Paris' WITH age > 30"],correct:0,expl:'AND = les deux conditions vraies. OR = au moins une vraie. Utilise des parenthèses pour combiner.'},
+{id:'s12',elo:510,mode:'sql',title:'BETWEEN',desc:'Produits dont le prix est <strong>entre 10 et 50 euros</strong>.',ctx:null,options:['WHERE prix BETWEEN 10 AND 50','WHERE prix FROM 10 TO 50','WHERE prix >= 10 TO <= 50','WHERE 10 < prix < 50'],correct:0,expl:'BETWEEN est inclusif (10 et 50 inclus). Équivalent à >= 10 AND <= 50.'},
+{id:'s13',elo:515,mode:'sql',title:'IN',desc:'Clients des villes Paris, Lyon <strong>ou</strong> Marseille.',ctx:null,options:["WHERE ville = 'Paris' OR 'Lyon' OR 'Marseille'","WHERE ville CONTAINS ('Paris','Lyon','Marseille')","WHERE ville AMONG ('Paris','Lyon','Marseille')","WHERE ville IN ('Paris','Lyon','Marseille')"],correct:3,expl:'IN() est plus lisible que plusieurs OR. Très utilisé pour filtrer sur une liste de valeurs.'},
+{id:'s14',elo:520,mode:'sql',title:'LIKE',desc:'Clients dont le nom <strong>commence par B</strong>.',ctx:null,options:["WHERE nom LIKE 'B%'","WHERE nom STARTS 'B'","WHERE nom = 'B*'","WHERE nom BEGIN WITH 'B'"],correct:0,expl:"LIKE avec % comme wildcard. 'B%' = commence par B. '%B' = finit par B. '%B%' = contient B."},
+{id:'s15',elo:530,mode:'sql',title:'IS NULL',desc:'Trouver les commandes <strong>sans date de livraison</strong>.',ctx:'TABLE commandes : id, montant, date_livraison',options:['WHERE date_livraison IS NULL','WHERE date_livraison = NULL','WHERE date_livraison == NULL','WHERE date_livraison EMPTY'],correct:0,expl:'NULL ne se compare pas avec =. On utilise IS NULL ou IS NOT NULL. NULL = valeur inconnue.'},
+{id:'s16',elo:540,mode:'sql',title:'NOT',desc:'Clients qui ne sont <strong>pas</strong> à Paris.',ctx:null,options:["WHERE ville != 'Paris'","WHERE ville NOT 'Paris'","WHERE ville EXCLUDE 'Paris'","WHERE NOT ville 'Paris'"],correct:0,expl:"!= ou <> signifie différent de. WHERE ville NOT IN ('Paris') fonctionne aussi pour exclure plusieurs valeurs."},
+{id:'s17',elo:545,mode:'sql',title:'ORDER BY + LIMIT',desc:'Les <strong>3 produits les plus chers</strong>.',ctx:'TABLE produits : id, nom, prix',options:['SELECT * FROM produits ORDER BY prix DESC LIMIT 3','SELECT TOP 3 * FROM produits ORDER BY prix DESC','SELECT * FROM produits LIMIT 3 ORDER BY prix DESC','SELECT * FROM produits ORDER BY prix LIMIT 3'],correct:0,expl:'ORDER BY DESC trie du plus grand au plus petit. LIMIT 3 garde les 3 premiers. Toujours ORDER BY avant LIMIT.'},
+
+// ── COUNT / SUM / AVG / MIN / MAX / GROUP BY / HAVING (ELO 550-750) ──
+{id:'s18',elo:550,mode:'sql',title:'COUNT total',desc:'Combien y a-t-il de clients au total ?',ctx:'TABLE clients : id, nom, ville',options:['SELECT COUNT(*) FROM clients','SELECT TOTAL(*) FROM clients','SELECT LEN(*) FROM clients','SELECT SIZE(*) FROM clients'],correct:0,expl:'COUNT(*) compte toutes les lignes. COUNT(colonne) compte les valeurs non NULL d-une colonne.'},
+{id:'s19',elo:560,mode:'sql',title:'SUM',desc:'Calcule le <strong>montant total</strong> de toutes les ventes.',ctx:'TABLE ventes : id, vendeur_id, montant',options:['SELECT SUM(montant) FROM ventes','SELECT TOTAL(montant) FROM ventes','SELECT ADD(montant) FROM ventes','SELECT montant.total FROM ventes'],correct:0,expl:'SUM(col) additionne toutes les valeurs numériques non NULL. Erreur courante : utiliser SUM sur des strings.'},
+{id:'s20',elo:570,mode:'sql',title:'AVG',desc:'Quel est le <strong>salaire moyen</strong> des employés ?',ctx:'TABLE employes : id, nom, salaire',options:['SELECT MEAN(salaire) FROM employes','SELECT AVG(salaire) FROM employes','SELECT AVERAGE(salaire) FROM employes','SELECT MID(salaire) FROM employes'],correct:1,expl:'AVG(col) calcule la moyenne arithmétique. NULL est ignoré dans le calcul.'},
+{id:'s21',elo:580,mode:'sql',title:'MIN et MAX',desc:'Prix du produit le <strong>moins cher</strong> et du plus cher.',ctx:'TABLE produits : id, nom, prix',options:['SELECT LOWEST(prix), HIGHEST(prix) FROM produits','SELECT MIN(prix), MAX(prix) FROM produits','SELECT SMALL(prix), LARGE(prix) FROM produits','SELECT FIRST(prix), LAST(prix) FROM produits'],correct:1,expl:'MIN() et MAX() fonctionnent sur les nombres, dates et textes. On peut les combiner dans le même SELECT.'},
+{id:'s22',elo:590,mode:'sql',title:'COUNT + WHERE',desc:'Combien de clients habitent à <strong>Paris</strong> ?',ctx:null,options:["SELECT COUNT(*) FROM clients WHERE ville = 'Paris'","SELECT COUNT(ville) FROM clients WHERE ville = 'Paris'","SELECT TOTAL(*) FROM clients IF ville = 'Paris'","SELECT COUNT(*) WHERE ville = 'Paris' FROM clients"],correct:0,expl:'On combine COUNT avec WHERE pour compter selon un filtre. L\'ordre est : SELECT → FROM → WHERE.'},
+{id:'s23',elo:600,mode:'sql',title:'GROUP BY basique',desc:'Compte le nombre de clients <strong>par ville</strong>.',ctx:null,options:['SELECT ville, COUNT(*) FROM clients GROUP BY ville','SELECT ville, COUNT(*) FROM clients ORDER BY ville','SELECT ville, SUM(*) FROM clients GROUP BY ville','SELECT GROUP BY ville, COUNT(*) FROM clients'],correct:0,expl:'GROUP BY regroupe les lignes ayant la même valeur. Toujours associé à une agrégation (COUNT, SUM, AVG...).'},
+{id:'s24',elo:615,mode:'sql',title:'SUM + GROUP BY',desc:'Calcule le <strong>CA total par vendeur</strong>.',ctx:'TABLE ventes : id, vendeur_id, montant',options:['SELECT vendeur_id, TOTAL(montant) FROM ventes GROUP BY vendeur_id','SELECT vendeur_id, SUM(montant) FROM ventes GROUP BY vendeur_id','SELECT vendeur_id, SUM(montant) FROM ventes ORDER BY vendeur_id','SELECT SUM(montant), vendeur_id FROM ventes GROUP BY montant'],correct:1,expl:'SUM + GROUP BY = total par groupe. C\'est l\'équivalent de SUMIF dans Excel mais en bien plus puissant.'},
+{id:'s25',elo:625,mode:'sql',title:'AVG + GROUP BY',desc:'Salaire moyen <strong>par département</strong>.',ctx:'TABLE employes : id, nom, departement, salaire',options:['SELECT departement, AVG(salaire) FROM employes GROUP BY departement','SELECT departement, MEAN(salaire) FROM employes GROUP BY departement','SELECT departement, AVG(salaire) FROM employes ORDER BY departement','SELECT AVG(salaire) FROM employes GROUP BY departement, salaire'],correct:1,expl:'AVG + GROUP BY = moyenne par groupe. Un pattern fondamental en data analysis.'},
+{id:'s26',elo:635,mode:'sql',title:'COUNT DISTINCT',desc:'Nombre de <strong>villes différentes</strong> dans la table clients.',ctx:null,options:['SELECT COUNT(UNIQUE ville) FROM clients','SELECT DISTINCT COUNT(ville) FROM clients','SELECT COUNT DIFFERENT ville FROM clients','SELECT COUNT(DISTINCT ville) FROM clients'],correct:3,expl:'COUNT(DISTINCT col) = nombre de valeurs uniques. Différent de COUNT(*) qui compte toutes les lignes.'},
+{id:'s27',elo:645,mode:'sql',title:'GROUP BY + ORDER BY',desc:'Affiche le CA par vendeur, <strong>du plus grand au plus petit</strong>.',ctx:'TABLE ventes : id, vendeur_id, montant',options:['SELECT vendeur_id, SUM(montant) FROM ventes ORDER BY SUM(montant) GROUP BY vendeur_id','SELECT vendeur_id, SUM(montant) AS ca FROM ventes GROUP BY vendeur_id ORDER BY ca DESC','SELECT vendeur_id, SUM(montant) FROM ventes GROUP BY vendeur_id SORT DESC','SELECT vendeur_id, SUM(montant) FROM ventes ORDER BY montant GROUP BY vendeur_id'],correct:1,expl:'ORDER BY vient APRÈS GROUP BY. On peut utiliser l\'alias (ca) dans ORDER BY pour simplifier.'},
+{id:'s28',elo:655,mode:'sql',title:'HAVING basique',desc:'Villes avec <strong>plus de 5 clients</strong>.',ctx:null,options:['SELECT ville, COUNT(*) FROM clients GROUP BY ville HAVING COUNT(*) > 5','SELECT ville, COUNT(*) FROM clients GROUP BY ville WHERE COUNT(*) > 5','SELECT ville, COUNT(*) FROM clients HAVING COUNT(*) > 5 GROUP BY ville','SELECT ville FROM clients GROUP BY ville HAVING COUNT(*) > 5'],correct:1,expl:'HAVING filtre APRÈS le GROUP BY. WHERE filtre AVANT. Règle : WHERE sur les lignes, HAVING sur les groupes.'},
+{id:'s29',elo:665,mode:'sql',title:'HAVING + agrégation',desc:'Départements où le <strong>salaire moyen dépasse 3000</strong>.',ctx:'TABLE employes : id, nom, departement, salaire',options:['SELECT departement, AVG(salaire) FROM employes WHERE AVG(salaire) > 3000 GROUP BY departement','SELECT departement FROM employes GROUP BY departement HAVING salaire > 3000','SELECT departement, AVG(salaire) FROM employes HAVING AVG(salaire) > 3000','SELECT departement, AVG(salaire) FROM employes GROUP BY departement HAVING AVG(salaire) > 3000'],correct:3,expl:'HAVING peut utiliser n\'importe quelle fonction d\'agrégation. WHERE ne peut pas.'},
+{id:'s30',elo:675,mode:'sql',title:'GROUP BY multiple',desc:'CA total <strong>par vendeur et par mois</strong>.',ctx:'TABLE ventes : id, vendeur_id, mois, montant',options:['SELECT vendeur_id, mois, SUM(montant) FROM ventes GROUP BY vendeur_id, mois','SELECT vendeur_id, mois, SUM(montant) FROM ventes GROUP BY vendeur_id','SELECT vendeur_id, mois, SUM(montant) FROM ventes GROUP BY mois, SUM(montant)','SELECT SUM(montant) FROM ventes GROUP BY vendeur_id, mois, montant'],correct:3,expl:'On peut GROUP BY sur plusieurs colonnes. Chaque combinaison unique de vendeur_id + mois forme un groupe.'},
+{id:'s31',elo:690,mode:'sql',title:'MIN/MAX + GROUP BY',desc:'Prix le plus bas <strong>par catégorie</strong> de produit.',ctx:'TABLE produits : id, nom, categorie, prix',options:['SELECT categorie, LOWEST(prix) FROM produits GROUP BY categorie','SELECT categorie, MIN(prix) FROM produits ORDER BY categorie','SELECT categorie, MIN(prix) FROM produits GROUP BY categorie','SELECT MIN(prix) FROM produits GROUP BY categorie, prix'],correct:2,expl:'MIN() et MAX() peuvent être utilisés avec GROUP BY pour trouver les extremes par groupe.'},
+{id:'s32',elo:700,mode:'sql',title:'COUNT + GROUP BY + HAVING',desc:'Clients ayant passé <strong>au moins 3 commandes</strong>.',ctx:'TABLE commandes : id, client_id, montant',options:['SELECT client_id, COUNT(*) FROM commandes GROUP BY client_id HAVING COUNT(*) >= 3','SELECT client_id, COUNT(*) FROM commandes WHERE COUNT(*) >= 3 GROUP BY client_id','SELECT client_id FROM commandes GROUP BY client_id HAVING COUNT(*) >= 3','SELECT client_id, COUNT(*) FROM commandes HAVING COUNT(*) >= 3'],correct:0,expl:'Pattern classique : GROUP BY + COUNT + HAVING. Identifier les clients les plus actifs.'},
+{id:'s33',elo:710,mode:'sql',title:'SUM + WHERE + GROUP BY',desc:'CA par vendeur <strong>uniquement pour 2024</strong>.',ctx:'TABLE ventes : id, vendeur_id, montant, annee',options:['SELECT vendeur_id, SUM(montant) FROM ventes GROUP BY vendeur_id HAVING annee = 2024','SELECT vendeur_id, SUM(montant) FROM ventes WHERE annee = 2024 GROUP BY vendeur_id','SELECT vendeur_id, SUM(montant) FROM ventes GROUP BY vendeur_id, annee WHERE annee = 2024','SELECT vendeur_id, SUM(montant) FROM ventes WHERE annee = 2024'],correct:1,expl:'WHERE filtre avant GROUP BY. L\'ordre SQL logique : WHERE → GROUP BY → HAVING → ORDER BY.'},
+
+// ── JOIN (ELO 750-900) ──
+{id:'s34',elo:750,mode:'sql',title:'INNER JOIN basique',desc:'Affiche le <strong>nom du client et le montant</strong> de sa commande.',ctx:'TABLE clients : id, nom\nTABLE commandes : id, client_id, montant',options:['SELECT nom, montant FROM clients JOIN commandes ON clients.id = commandes.client_id','SELECT nom, montant FROM clients MERGE commandes ON clients.id = commandes.client_id','SELECT nom, montant FROM clients, commandes WHERE clients.id = commandes.client_id','SELECT clients.nom, commandes.montant FROM clients ATTACH commandes ON id'],correct:1,expl:'JOIN relie deux tables sur une clé commune. ON spécifie la condition de jointure.'},
+{id:'s35',elo:760,mode:'sql',title:'JOIN + WHERE',desc:'Commandes <strong>supérieures à 100€</strong> avec le nom du client.',ctx:'TABLE clients : id, nom\nTABLE commandes : id, client_id, montant',options:['SELECT nom, montant FROM clients JOIN commandes ON clients.id = commandes.client_id HAVING montant > 100','SELECT nom, montant FROM clients, commandes WHERE clients.id = commandes.client_id AND montant > 100','SELECT nom, montant FROM clients JOIN commandes ON clients.id = commandes.client_id AND WHERE montant > 100','SELECT nom, montant FROM clients JOIN commandes ON clients.id = commandes.client_id WHERE montant > 100'],correct:3,expl:'On peut ajouter WHERE après un JOIN pour filtrer les résultats de la jointure.'},
+{id:'s36',elo:770,mode:'sql',title:'JOIN + COUNT',desc:'Nombre de commandes <strong>par client</strong>.',ctx:'TABLE clients : id, nom\nTABLE commandes : id, client_id',options:['SELECT nom, COUNT(*) FROM clients JOIN commandes ON clients.id = commandes.client_id','SELECT COUNT(*), nom FROM clients JOIN commandes GROUP BY nom','SELECT nom, COUNT(*) FROM clients JOIN commandes ON clients.id = commandes.client_id GROUP BY clients.id, nom','SELECT nom, COUNT(commandes.id) FROM clients, commandes GROUP BY nom'],correct:2,expl:'JOIN + GROUP BY + COUNT = pattern pour compter les éléments liés. GROUP BY sur clients.id pour éviter les doublons si les noms se répètent.'},
+{id:'s37',elo:780,mode:'sql',title:'LEFT JOIN',desc:'Tous les clients, <strong>même ceux sans commande</strong>.',ctx:'TABLE clients : id, nom\nTABLE commandes : id, client_id, montant',options:['SELECT nom, montant FROM clients JOIN commandes ON clients.id = commandes.client_id','SELECT nom, montant FROM clients RIGHT JOIN commandes ON clients.id = commandes.client_id','SELECT nom, montant FROM clients LEFT JOIN commandes ON clients.id = commandes.client_id','SELECT nom, montant FROM clients FULL JOIN commandes ON clients.id = commandes.client_id'],correct:2,expl:'LEFT JOIN garde TOUTES les lignes de la table gauche (clients). NULL pour les colonnes de droite si pas de match.'},
+{id:'s38',elo:790,mode:'sql',title:'LEFT JOIN + IS NULL',desc:'Clients <strong>sans aucune commande</strong>.',ctx:'TABLE clients : id, nom\nTABLE commandes : id, client_id',options:['SELECT nom FROM clients LEFT JOIN commandes ON clients.id = commandes.client_id WHERE commandes.id = NULL','SELECT nom FROM clients LEFT JOIN commandes ON clients.id = commandes.client_id WHERE commandes.id IS NULL','SELECT nom FROM clients WHERE id NOT IN commandes','SELECT nom FROM clients INNER JOIN commandes ON clients.id = commandes.client_id WHERE commandes.id IS NULL'],correct:1,expl:'LEFT JOIN + IS NULL = clients sans commande. INNER JOIN n\'aurait retourné que ceux qui ont des commandes.'},
+{id:'s39',elo:800,mode:'sql',title:'JOIN + SUM',desc:'CA total <strong>par client</strong> (nom + montant total).',ctx:'TABLE clients : id, nom\nTABLE commandes : id, client_id, montant',options:['SELECT nom, SUM(montant) AS total FROM clients JOIN commandes ON clients.id = commandes.client_id GROUP BY clients.id, nom','SELECT nom, SUM(montant) FROM clients JOIN commandes ON clients.id = commandes.client_id','SELECT nom, TOTAL(montant) FROM clients JOIN commandes ON clients.id = commandes.client_id GROUP BY nom','SELECT clients.nom, commandes.montant FROM clients JOIN commandes ON clients.id = commandes.client_id'],correct:1,expl:'JOIN + SUM + GROUP BY = CA par client. Pattern fondamental en reporting de ventes.'},
+{id:'s40',elo:810,mode:'sql',title:'JOIN 3 tables',desc:'Nom du client, nom du produit et quantité commandée.',ctx:'TABLE clients : id, nom\nTABLE commandes : id, client_id, produit_id, quantite\nTABLE produits : id, nom',options:['SELECT clients.nom, produits.nom, quantite FROM clients, commandes, produits WHERE clients.id = commandes.client_id','SELECT clients.nom, produits.nom, quantite FROM clients JOIN commandes ON clients.id = commandes.client_id JOIN produits ON commandes.produit_id = produits.id','SELECT c.nom, p.nom, quantite FROM clients c JOIN commandes cmd ON c.id = cmd.client_id','SELECT * FROM clients JOIN commandes JOIN produits ON clients.id = commandes.client_id'],correct:1,expl:'On peut enchaîner plusieurs JOINs. Chaque JOIN ajoute une table avec sa condition ON.'},
+{id:'s41',elo:820,mode:'sql',title:'JOIN + ORDER BY',desc:'Top 5 clients par CA, <strong>avec leur nom</strong>.',ctx:'TABLE clients : id, nom\nTABLE commandes : id, client_id, montant',options:['SELECT nom, SUM(montant) FROM clients JOIN commandes ON clients.id = commandes.client_id LIMIT 5','SELECT TOP 5 nom, SUM(montant) FROM clients JOIN commandes GROUP BY nom ORDER BY SUM DESC','SELECT nom, SUM(montant) AS ca FROM clients JOIN commandes ON clients.id = commandes.client_id GROUP BY clients.id, nom ORDER BY ca DESC LIMIT 5','SELECT nom, montant FROM clients JOIN commandes ON clients.id = commandes.client_id ORDER BY montant DESC LIMIT 5'],correct:2,expl:'JOIN + SUM + GROUP BY + ORDER BY + LIMIT = requête de ranking. Un classique en data.'},
+{id:'s42',elo:830,mode:'sql',title:'LEFT JOIN + COUNT',desc:'Nombre de commandes par client, <strong>0 si aucune</strong>.',ctx:'TABLE clients : id, nom\nTABLE commandes : id, client_id',options:['SELECT nom, COUNT(commandes.id) AS nb FROM clients LEFT JOIN commandes ON clients.id = commandes.client_id GROUP BY clients.id, nom','SELECT nom, COUNT(*) FROM clients LEFT JOIN commandes ON clients.id = commandes.client_id GROUP BY nom','SELECT nom, COUNT(*) FROM clients JOIN commandes ON clients.id = commandes.client_id GROUP BY nom','SELECT nom, SUM(commandes.id) FROM clients LEFT JOIN commandes ON clients.id = commandes.client_id GROUP BY nom'],correct:0,expl:'COUNT(commandes.id) retourne 0 si pas de commande (NULL non compté). COUNT(*) retournerait 1 même sans commande.'},
+{id:'s43',elo:840,mode:'sql',title:'JOIN + AVG + HAVING',desc:'Clients dont la commande moyenne <strong>dépasse 200€</strong>.',ctx:'TABLE clients : id, nom\nTABLE commandes : id, client_id, montant',options:['SELECT nom, AVG(montant) FROM clients JOIN commandes ON clients.id = commandes.client_id GROUP BY clients.id, nom HAVING AVG(montant) > 200','SELECT nom, AVG(montant) FROM clients JOIN commandes ON clients.id = commandes.client_id WHERE AVG(montant) > 200','SELECT nom, AVG(montant) FROM clients JOIN commandes ON clients.id = commandes.client_id GROUP BY nom HAVING montant > 200','SELECT nom FROM clients JOIN commandes ON clients.id = commandes.client_id HAVING AVG(montant) > 200'],correct:0,expl:'HAVING filtre sur l\'agrégat (AVG) après le GROUP BY. WHERE filtre avant le groupage.'},
+
+// ── CASE WHEN / sous-requêtes simples / UNION (ELO 900-1000) ──
+{id:'s44',elo:900,mode:'sql',title:'CASE WHEN basique',desc:'Catégoriser les produits : "cher" si prix > 100, sinon "abordable".',ctx:'TABLE produits : id, nom, prix',options:["SELECT nom, CASE WHEN prix > 100 THEN 'cher' ELSE 'abordable' END AS categorie FROM produits","SELECT nom, IF prix > 100 THEN 'cher' ELSE 'abordable' FROM produits","SELECT nom, SWITCH prix > 100 AS 'cher' ELSE 'abordable' FROM produits","SELECT nom, prix > 100 ? 'cher' : 'abordable' FROM produits"],correct:0,expl:'CASE WHEN crée des colonnes conditionnelles. Termine toujours par END. L\'équivalent de IF en SQL.'},
+{id:'s45',elo:910,mode:'sql',title:'CASE WHEN multiple',desc:'Classer les employés : "junior" < 30 ans, "senior" 30-50, "vétéran" > 50.',ctx:'TABLE employes : id, nom, age',options:["SELECT nom, CASE WHEN age < 30 THEN 'junior' WHEN age <= 50 THEN 'senior' ELSE 'vétéran' END FROM employes","SELECT nom, IF age < 30 'junior' ELIF age <= 50 'senior' ELSE 'vétéran' FROM employes","SELECT nom, CASE age WHEN < 30 THEN 'junior' WHEN <= 50 THEN 'senior' ELSE 'vétéran' FROM employes","SELECT nom, SWITCH(age, 30, 'junior', 50, 'senior', 'vétéran') FROM employes"],correct:0,expl:'CASE WHEN peut avoir plusieurs WHEN. Les conditions sont évaluées dans l\'ordre, la première vraie est retournée.'},
+{id:'s46',elo:920,mode:'sql',title:'Sous-requête WHERE',desc:'Produits dont le prix est supérieur à la <strong>moyenne</strong>.',ctx:'TABLE produits : id, nom, prix',options:['SELECT nom FROM produits WHERE prix > (SELECT AVG(prix) FROM produits)','SELECT nom FROM produits WHERE prix > AVG(prix)','SELECT nom FROM produits HAVING prix > AVG(prix)','SELECT nom FROM produits WHERE prix > AVERAGE FROM produits'],correct:0,expl:'Une sous-requête entre parenthèses est calculée en premier. Elle retourne ici la moyenne, utilisée comme filtre.'},
+{id:'s47',elo:930,mode:'sql',title:'Sous-requête IN',desc:'Clients qui ont <strong>passé au moins une commande</strong>.',ctx:'TABLE clients : id, nom\nTABLE commandes : id, client_id',options:['SELECT nom FROM clients WHERE id = (SELECT client_id FROM commandes)','SELECT nom FROM clients WHERE EXISTS commandes','SELECT nom FROM clients JOIN commandes ON clients.id = commandes.client_id','SELECT nom FROM clients WHERE id IN (SELECT client_id FROM commandes)'],correct:3,expl:'IN avec sous-requête vérifie si la valeur est dans la liste retournée. Équivalent à un INNER JOIN ici.'},
+{id:'s48',elo:940,mode:'sql',title:'NOT IN',desc:'Clients qui <strong>n\'ont jamais commandé</strong>.',ctx:'TABLE clients : id, nom\nTABLE commandes : id, client_id',options:['SELECT nom FROM clients WHERE id NOT IN (SELECT client_id FROM commandes)','SELECT nom FROM clients WHERE id != (SELECT client_id FROM commandes)','SELECT nom FROM clients WHERE NOT EXISTS commandes','SELECT nom FROM clients WHERE id EXCLUDE (SELECT client_id FROM commandes)'],correct:0,expl:'NOT IN = l\'opposé de IN. Attention si la sous-requête peut retourner des NULL (utiliser IS NOT NULL dans la sous-requête).'},
+{id:'s49',elo:950,mode:'sql',title:'UNION',desc:'Noms des clients ET des fournisseurs dans une seule liste.',ctx:'TABLE clients : id, nom\nTABLE fournisseurs : id, nom',options:['SELECT nom FROM clients UNION SELECT nom FROM fournisseurs','SELECT nom FROM clients JOIN SELECT nom FROM fournisseurs','SELECT nom FROM clients + SELECT nom FROM fournisseurs','SELECT nom FROM clients MERGE SELECT nom FROM fournisseurs'],correct:0,expl:'UNION combine deux SELECT verticalement et élimine les doublons. UNION ALL garde tous les doublons (plus rapide).'},
+{id:'s50',elo:960,mode:'sql',title:'Sous-requête MAX',desc:'Le produit avec le <strong>prix le plus élevé</strong>.',ctx:'TABLE produits : id, nom, prix',options:['SELECT nom FROM produits WHERE prix = MAX(prix)','SELECT MAX(nom) FROM produits','SELECT nom FROM produits WHERE prix = (SELECT MAX(prix) FROM produits)','SELECT nom, MAX(prix) FROM produits'],correct:2,expl:'Sous-requête scalaire : retourne une seule valeur. On compare avec cette valeur pour trouver la ligne correspondante.'},
+
+// ════════ PYTHON ════════
+// ── Variables / bases / listes / boucles (ELO 400-550) — mirrorées ──
+{id:'p01',elo:400,mode:'py',title:'Afficher tout le DataFrame',desc:'Comment afficher <strong>tout le contenu</strong> d\'un DataFrame en Python ?',ctx:'df = pd.read_csv("clients.csv")',options:['df.show()','print.all(df)','df','df.display()'],correct:2,expl:'Dans Jupyter/Colab, écrire df seul affiche tout le DataFrame. Équivalent de SELECT * FROM table en SQL.'},
+{id:'p02',elo:410,mode:'py',title:'Sélectionner des colonnes',desc:'Comment afficher uniquement les colonnes <strong>nom et email</strong> ?',ctx:'df avec colonnes : id, nom, email, ville, age',options:['df[["nom","email"]]','df["nom","email"]','df.select("nom","email")','df.get(["nom","email"])'],correct:0,expl:'df[["col1","col2"]] avec double crochets sélectionne plusieurs colonnes. Équivalent de SELECT col1, col2.'},
+{id:'p03',elo:420,mode:'py',title:'Renommer une colonne',desc:'Comment renommer la colonne montant en <strong>total</strong> ?',ctx:null,options:['df.rename(columns={"montant":"total"})','df.rename("montant","total")','df["montant"].rename("total")','df.columns["montant"] = "total"'],correct:0,expl:'.rename(columns={ancien:nouveau}) prend un dict. Ajoute inplace=True pour modifier le df directement.'},
+{id:'p04',elo:430,mode:'py',title:'Trier croissant',desc:'Trier les produits par <strong>prix croissant</strong>.',ctx:'df avec colonnes : id, nom, prix',options:['df.sort("prix")','df.order_by("prix")','df.sort_values("prix")','df.rank("prix")'],correct:2,expl:'.sort_values("col") trie par ordre croissant par défaut. Équivalent de ORDER BY prix ASC.'},
+{id:'p05',elo:440,mode:'py',title:'Trier décroissant',desc:'Trier les employés du <strong>salaire le plus élevé au plus bas</strong>.',ctx:null,options:['df.sort_values("salaire", ascending=False)','df.sort_values("salaire", order="desc")','df.sort_values("salaire", reverse=True)','df.order_by("salaire", desc=True)'],correct:0,expl:'ascending=False = tri décroissant. Équivalent de ORDER BY salaire DESC en SQL.'},
+{id:'p06',elo:450,mode:'py',title:'Premières lignes',desc:'Afficher les <strong>5 premières</strong> lignes du DataFrame.',ctx:null,options:['df.first(5)','df.show(5)','df.top()','df.head()'],correct:3,expl:'head(n) retourne les n premières lignes (5 par défaut). Équivalent de LIMIT 5 en SQL.'},
+{id:'p07',elo:460,mode:'py',title:'Valeurs uniques',desc:'Afficher les <strong>villes uniques</strong> sans doublons.',ctx:null,options:['df["ville"].unique()','df["ville"].distinct()','df.unique("ville")','df["ville"].deduplicate()'],correct:0,expl:'.unique() retourne les valeurs uniques d-une colonne. .nunique() retourne le nombre. Équivalent de SELECT DISTINCT.'},
+{id:'p08',elo:470,mode:'py',title:'Filtrer une valeur',desc:'Afficher les clients dont la ville est <strong>Lyon</strong>.',ctx:null,options:['df[df["ville"] == "Lyon"]','df.filter(ville="Lyon")','df.where("ville == Lyon")','df[df.ville is "Lyon"]'],correct:0,expl:'df[condition] filtre. La condition crée un masque booléen. Équivalent de WHERE ville = \'Lyon\'.'},
+{id:'p09',elo:480,mode:'py',title:'Condition numérique',desc:'Produits dont le prix est <strong>supérieur à 50</strong>.',ctx:null,options:['df[df["prix"] > 50]','df.filter(df["prix"] > 50)','df[df["prix"].greater(50)]','df.where(prix > 50)'],correct:0,expl:'df[df["col"] > valeur] filtre les lignes. Équivalent de WHERE prix > 50 en SQL.'},
+{id:'p10',elo:490,mode:'py',title:'Filtrer texte exact',desc:'Employés dont le département est <strong>Ventes</strong>.',ctx:null,options:['df[df["departement"] == "Ventes"]','df[df["departement"].is("Ventes")]','df.filter(departement="Ventes")','df[departement == "Ventes"]'],correct:0,expl:'== pour l\'égalité exacte. != pour différent. Toujours utiliser df["col"] et non df.col dans les conditions.'},
+{id:'p11',elo:500,mode:'py',title:'Conditions multiples',desc:'Clients de Paris <strong>ET</strong> de plus de 30 ans.',ctx:null,options:['df[(df["ville"]=="Paris") & (df["age"]>30)]','df[df["ville"]=="Paris" AND df["age"]>30]','df.filter(ville="Paris", age=">30")','df[(df["ville"]=="Paris") and (df["age"]>30)]'],correct:0,expl:'& pour AND, | pour OR. Toujours mettre les conditions entre parenthèses. \'and\' Python ne fonctionne pas sur les Series.'},
+{id:'p12',elo:510,mode:'py',title:'Entre deux valeurs',desc:'Produits dont le prix est <strong>entre 10 et 50</strong>.',ctx:null,options:['df[df["prix"].between(10, 50)]','df[(df["prix"] >= 10) & (df["prix"] <= 50)]','df[df["prix"].between(10, 50)]','Les deux premières réponses sont correctes'],correct:3,expl:'.between(a,b) est inclusif et équivalent à >= a & <= b. Les deux syntaxes fonctionnent.'},
+{id:'p13',elo:515,mode:'py',title:'isin()',desc:'Clients des villes Paris, Lyon <strong>ou</strong> Marseille.',ctx:null,options:['df[df["ville"].isin(["Paris","Lyon","Marseille"])]','df[df["ville"] == ["Paris","Lyon","Marseille"]]','df.filter(ville=["Paris","Lyon","Marseille"])','df[(df["ville"]=="Paris")|(df["ville"]=="Lyon")|(df["ville"]=="Marseille")]'],correct:0,expl:'.isin() = SQL IN. Plus lisible que plusieurs conditions OR. ~df[...isin()] = NOT IN.'},
+{id:'p14',elo:520,mode:'py',title:'str.contains()',desc:'Clients dont le nom <strong>commence par B</strong>.',ctx:null,options:['df[df["nom"].str.startswith("B")]','df[df["nom"].starts("B")]','df[df["nom"].str.contains("^B")]','df[df["nom"].begin("B")]'],correct:0,expl:'.str.startswith() = LIKE \'B%\'. .str.endswith() = LIKE \'%B\'. .str.contains() = LIKE \'%B%\'.'},
+{id:'p15',elo:530,mode:'py',title:'isna()',desc:'Trouver les commandes <strong>sans date de livraison</strong>.',ctx:null,options:['df[df["date_livraison"].isna()]','df[df["date_livraison"] == None]','df[df["date_livraison"].is_null()]','df.where(df["date_livraison"] is None)'],correct:0,expl:'.isna() ou .isnull() détecte les NaN/None. Équivalent de IS NULL en SQL. .notna() = IS NOT NULL.'},
+{id:'p16',elo:540,mode:'py',title:'!=',desc:'Clients qui ne sont <strong>pas</strong> à Paris.',ctx:null,options:['df[df["ville"] != "Paris"]','df[df["ville"].not_equal("Paris")]','df[NOT df["ville"] == "Paris"]','df.exclude(ville="Paris")'],correct:0,expl:'!= signifie différent de. ~df[df["ville"]=="Paris"] fonctionne aussi (~ = NOT).'},
+{id:'p17',elo:545,mode:'py',title:'head() + sort_values()',desc:'Les <strong>3 produits les plus chers</strong>.',ctx:null,options:['df.sort_values("prix", ascending=False).head(3)','df.head(3).sort_values("prix", ascending=False)','df.sort_values("prix").tail(3)','df.nlargest(3, "prix")'],correct:0,expl:'sort_values(ascending=False) puis head(3). Ou plus concis : df.nlargest(3, "col"). Les deux sont corrects.'},
+
+// ── count / sum / mean / groupby / value_counts (ELO 550-750) ──
+{id:'p18',elo:550,mode:'py',title:'Compter les lignes',desc:'Combien y a-t-il de clients au total ?',ctx:null,options:['df.count()','df.total()','COUNT(df)','len(df)'],correct:3,expl:'len(df) = nombre de lignes. df.count() retourne le nombre de valeurs non-NULL par colonne. Équivalent de COUNT(*).'},
+{id:'p19',elo:560,mode:'py',title:'sum()',desc:'Calcule le <strong>montant total</strong> de toutes les ventes.',ctx:null,options:['df["montant"].sum()','df["montant"].total()','df.sum("montant")','SUM(df["montant"])'],correct:0,expl:'.sum() additionne toutes les valeurs. Équivalent de SUM() en SQL. Ignore les NaN par défaut.'},
+{id:'p20',elo:570,mode:'py',title:'mean()',desc:'Quel est le <strong>salaire moyen</strong> des employés ?',ctx:null,options:['df["salaire"].mean()','df["salaire"].avg()','df.mean("salaire")','AVG(df["salaire"])'],correct:0,expl:'.mean() calcule la moyenne. .median() pour la médiane. .std() pour l\'écart-type.'},
+{id:'p21',elo:580,mode:'py',title:'min() et max()',desc:'Prix du produit le <strong>moins cher</strong> et du plus cher.',ctx:null,options:['df["prix"].min(), df["prix"].max()','df["prix"].lowest(), df["prix"].highest()','MIN(df["prix"]), MAX(df["prix"])','df.min("prix"), df.max("prix")'],correct:0,expl:'.min() et .max() fonctionnent sur toute colonne comparable. Équivalent de MIN() et MAX() en SQL.'},
+{id:'p22',elo:590,mode:'py',title:'count() filtré',desc:'Combien de clients habitent à <strong>Paris</strong> ?',ctx:null,options:['len(df[df["ville"] == "Paris"])','df[df["ville"] == "Paris"].count()','df.count(ville="Paris")','df["ville"].count("Paris")'],correct:0,expl:'Filtrer d\'abord, puis len() pour compter. Équivalent de COUNT(*) WHERE ville = \'Paris\'.'},
+{id:'p23',elo:600,mode:'py',title:'groupby basique',desc:'Compte le nombre de clients <strong>par ville</strong>.',ctx:null,options:['df.groupby("ville").size()','df.groupby("ville").count()','df.group("ville").size()','df.aggregate("ville", "count")'],correct:0,expl:'.groupby("col").size() = nombre de lignes par groupe. Équivalent de GROUP BY + COUNT(*).'},
+{id:'p24',elo:615,mode:'py',title:'groupby + sum',desc:'Calcule le <strong>CA total par vendeur</strong>.',ctx:null,options:['df.groupby("vendeur_id")["montant"].sum()','df.groupby("vendeur_id").sum("montant")','df.group("vendeur_id")["montant"].total()','df["montant"].sum().groupby("vendeur_id")'],correct:0,expl:'groupby().sum() = GROUP BY + SUM. L\'ordre : groupby → sélection colonne → agrégation.'},
+{id:'p25',elo:625,mode:'py',title:'groupby + mean',desc:'Salaire moyen <strong>par département</strong>.',ctx:null,options:['df.groupby("departement")["salaire"].mean()','df.groupby("departement").mean("salaire")','df.group("departement")["salaire"].avg()','df["salaire"].mean().groupby("departement")'],correct:0,expl:'groupby("col")["autre_col"].mean() = GROUP BY + AVG. Pattern fondamental en data.'},
+{id:'p26',elo:635,mode:'py',title:'nunique()',desc:'Nombre de <strong>villes différentes</strong> dans le DataFrame.',ctx:null,options:['df["ville"].nunique()','df["ville"].unique().count()','len(df["ville"].unique())','df["ville"].count_unique()'],correct:0,expl:'.nunique() = COUNT(DISTINCT). .unique() retourne la liste, .nunique() retourne le nombre.'},
+{id:'p27',elo:645,mode:'py',title:'groupby + sort',desc:'CA par vendeur, <strong>du plus grand au plus petit</strong>.',ctx:null,options:['df.groupby("vendeur_id")["montant"].sum().sort_values(ascending=False)','df.groupby("vendeur_id")["montant"].sum().order(desc=True)','df.groupby("vendeur_id")["montant"].sum().sort(ascending=False)','df.sort_values(df.groupby("vendeur_id")["montant"].sum())'],correct:0,expl:'On enchaîne : groupby → sum → sort_values. Équivalent de GROUP BY + SUM + ORDER BY DESC.'},
+{id:'p28',elo:655,mode:'py',title:'groupby + filter',desc:'Villes avec <strong>plus de 5 clients</strong>.',ctx:null,options:['df.groupby("ville").filter(lambda g: len(g) > 5)','df.groupby("ville").size() > 5','df[df.groupby("ville").size() > 5]','df.groupby("ville").count() > 5'],correct:0,expl:'filter() garde les groupes satisfaisant la condition. Equivalent de HAVING en SQL.'},{id:'p29',elo:665,mode:'py',title:'groupby + mean + filter',desc:'Départements où le salaire moyen dépasse 3000.',ctx:null,options:['df.groupby("departement").filter(lambda g: g["salaire"].mean() > 3000)["departement"].unique()','df.groupby("departement")["salaire"].mean() > 3000','df.groupby("departement")["salaire"].filter(lambda x: x > 3000)','df[df["salaire"] > 3000].groupby("departement").mean()'],correct:0,expl:'filter() garde les groupes dont la moyenne depasse 3000. Equivalent de HAVING AVG > 3000.'},
+{id:'p30',elo:675,mode:'py',title:'groupby multiple',desc:'CA total par vendeur et par mois.',ctx:"df avec colonnes : vendeur_id, mois, montant",options:['df.groupby(["vendeur_id","mois"])["montant"].sum()','df.groupby("vendeur_id")["montant"].sum()','df.groupby("mois")["montant"].sum()','df.groupby("vendeur_id").sum()'],correct:0,expl:'groupby accepte une liste de colonnes. Chaque combinaison forme un groupe.'},
+{id:'p31',elo:690,mode:'py',title:'min/max + groupby',desc:'Prix le plus bas <strong>par catégorie</strong>.',ctx:null,options:['df.groupby("categorie")["prix"].min()','df.groupby("categorie").min("prix")','df.min().groupby("categorie")["prix"]','df["prix"].min().groupby("categorie")'],correct:0,expl:'groupby("col")["autre"].min() = GROUP BY + MIN(). Pattern identique à sum() et mean().'},
+{id:'p32',elo:700,mode:'py',title:'value_counts()',desc:'Nombre de commandes <strong>par client</strong>.',ctx:'df avec colonne client_id',options:['df["client_id"].value_counts()','df.groupby("client_id").count()','df["client_id"].count()','df.count("client_id")'],correct:0,expl:'.value_counts() compte les occurrences de chaque valeur, triées par fréquence. Plus court que groupby pour un comptage simple.'},
+{id:'p33',elo:710,mode:'py',title:'groupby + filter résultat',desc:'CA par vendeur <strong>uniquement pour 2024</strong>.',ctx:'df avec colonnes : vendeur_id, montant, annee',options:['df[df["annee"]==2024].groupby("vendeur_id")["montant"].sum()','df.groupby("vendeur_id")["montant"].sum().filter(annee=2024)','df.groupby(["vendeur_id","annee"])["montant"].sum()','df.groupby("vendeur_id")["montant"].sum()[df["annee"]==2024]'],correct:0,expl:'Filtrer AVANT le groupby pour ne calculer que sur 2024. Équivalent de WHERE annee = 2024 GROUP BY.'},
+
+// ── merge / read_csv / describe / dropna / fillna (ELO 750-900) ──
+{id:'p34',elo:750,mode:'py',title:'merge basique',desc:'Affiche le <strong>nom du client et le montant</strong> de sa commande.',ctx:'df_clients : id, nom\ndf_commandes : id, client_id, montant',options:['pd.merge(df_clients, df_commandes, left_on="id", right_on="client_id")','df_clients.join(df_commandes, on="id")','pd.concat([df_clients, df_commandes], on="id")','df_clients.merge(df_commandes, on="id")'],correct:0,expl:'pd.merge() = SQL JOIN. left_on et right_on quand les colonnes ont des noms différents.'},
+{id:'p35',elo:760,mode:'py',title:'merge + filter',desc:'Commandes <strong>supérieures à 100€</strong> avec le nom du client.',ctx:null,options:['pd.merge(df_clients, df_commandes, left_on="id", right_on="client_id")[lambda df: df["montant"] > 100]','pd.merge(df_clients, df_commandes, left_on="id", right_on="client_id").query("montant > 100")','pd.merge(df_clients[df_clients.montant > 100], df_commandes, left_on="id", right_on="client_id")','df_clients.merge(df_commandes, left_on="id", right_on="client_id").filter(montant=">100")'],correct:1,expl:'.query() est très lisible pour filtrer après un merge. Équivalent de JOIN + WHERE montant > 100.'},
+{id:'p36',elo:770,mode:'py',title:'merge + groupby',desc:'Nombre de commandes <strong>par client</strong> (avec le nom).',ctx:null,options:['pd.merge(df_clients, df_commandes, left_on="id", right_on="client_id").groupby(["id","nom"]).size()','pd.merge(df_clients, df_commandes, left_on="id", right_on="client_id").groupby("nom").count()','df_clients.merge(df_commandes, on="id").groupby("nom").size()','df_commandes.groupby("client_id").size().merge(df_clients)'],correct:0,expl:'merge() puis groupby() + size(). Equivalent de JOIN + GROUP BY + COUNT(*).'},
+{id:'p37',elo:780,mode:'py',title:'merge how=left',desc:'Tous les clients, <strong>même ceux sans commande</strong>.',ctx:null,options:['pd.merge(df_clients, df_commandes, left_on="id", right_on="client_id")','pd.merge(df_clients, df_commandes, left_on="id", right_on="client_id", how="outer")','pd.merge(df_clients, df_commandes, left_on="id", right_on="client_id", how="left")','pd.merge(df_commandes, df_clients, left_on="client_id", right_on="id", how="right")'],correct:2,expl:'how="left" = LEFT JOIN. Garde tous les clients même sans commande. NaN pour les colonnes de commandes.'},
+{id:'p38',elo:790,mode:'py',title:'merge + isna()',desc:'Clients <strong>sans aucune commande</strong>.',ctx:null,options:['df_merged = pd.merge(df_clients, df_commandes, left_on="id", right_on="client_id", how="left"); df_merged[df_merged["montant"].isna()]','pd.merge(df_clients, df_commandes, left_on="id", right_on="client_id", how="left").dropna()','df_clients[~df_clients["id"].isin(df_commandes["client_id"])]','pd.merge(df_clients, df_commandes, left_on="id", right_on="client_id").query("montant IS NULL")'],correct:0,expl:'LEFT JOIN + isna() = clients sans commande. La 3eme option avec ~isin() fonctionne aussi.'},
+{id:'p39',elo:800,mode:'py',title:'merge + sum',desc:'CA total <strong>par client</strong> (nom + montant total).',ctx:null,options:['pd.merge(df_clients, df_commandes, left_on="id", right_on="client_id").groupby(["id","nom"])["montant"].sum()','pd.merge(df_clients, df_commandes, left_on="id", right_on="client_id").sum("montant")','df_clients.merge(df_commandes, on="id").groupby("nom")["montant"].sum()','pd.merge(df_clients, df_commandes).groupby("nom")["montant"].total()'],correct:0,expl:'merge() puis groupby() + sum(). Equivalent de JOIN + GROUP BY + SUM en SQL.'},
+{id:'p40',elo:810,mode:'py',title:'read_csv',desc:'Lire le fichier <strong>ventes.csv</strong> et afficher ses 5 premières lignes.',ctx:null,options:['pd.read_csv("ventes.csv").head()','pd.open("ventes.csv").head()','pd.load_csv("ventes.csv").first(5)','pd.import("ventes.csv").head()'],correct:0,expl:'read_csv() retourne un DataFrame. .head() affiche les 5 premières lignes. Premier réflexe sur tout nouveau dataset.'},
+{id:'p41',elo:820,mode:'py',title:'describe()',desc:'Obtenir un <strong>résumé statistique</strong> complet du DataFrame.',ctx:null,options:['df.stats()','df.describe()','df.summary()','df.info_stats()'],correct:1,expl:'describe() : count, mean, std, min, 25%, 50%, 75%, max pour chaque colonne numérique. Essentiel en EDA.'},
+{id:'p42',elo:830,mode:'py',title:'info()',desc:'Voir les <strong>types de colonnes</strong> et le nombre de valeurs non-null.',ctx:null,options:['df.types()','df.schema()','df.info()','df.describe_types()'],correct:2,expl:'.info() montre le nom, type et count non-null de chaque colonne. Très utile pour détecter les problèmes de types.'},
+{id:'p43',elo:840,mode:'py',title:'dropna()',desc:'Supprimer les lignes avec des <strong>valeurs manquantes</strong>.',ctx:null,options:['df.dropna()','df.remove_null()','df.clean()','df.drop_missing()'],correct:0,expl:'.dropna() supprime les lignes avec au moins un NaN. subset=["col"] pour cibler une colonne spécifique.'},
+{id:'p44',elo:850,mode:'py',title:'fillna()',desc:'Remplacer les valeurs manquantes de la colonne age par <strong>la moyenne</strong>.',ctx:null,options:['df["age"].fillna(df["age"].mean())','df["age"].fill(df["age"].mean())','df["age"].replace_null(df["age"].mean())','df.fillna("age", df["age"].mean())'],correct:0,expl:'.fillna(valeur) remplace les NaN. On peut passer une valeur fixe ou une valeur calculée comme la moyenne.'},
+
+// ── apply / pivot_table / sort / np.where / concat (ELO 900-1000) ──
+{id:'p45',elo:900,mode:'py',title:'np.where (CASE WHEN)',desc:'Catégoriser les produits : "cher" si prix > 100, sinon "abordable".',ctx:'import numpy as np',options:['df["categorie"] = np.where(df["prix"] > 100, "cher", "abordable")','df["categorie"] = if df["prix"] > 100 then "cher" else "abordable"','df["categorie"] = df["prix"].case(100, "cher", "abordable")','df["categorie"] = df.apply(prix > 100, "cher", "abordable")'],correct:0,expl:'np.where(condition, valeur_si_vrai, valeur_si_faux) = CASE WHEN ... THEN ... ELSE ... END en SQL.'},
+{id:'p46',elo:910,mode:'py',title:'np.select (CASE WHEN multiple)',desc:'Classer les employés : "junior" < 30 ans, "senior" 30-50, "vétéran" > 50.',ctx:null,options:['df["classe"] = np.select([df["age"]<30, df["age"]<=50], ["junior","senior"], "vétéran")','df["classe"] = np.where([df["age"]<30, df["age"]<=50], ["junior","senior"], "vétéran")','df["classe"] = df["age"].case([30,50], ["junior","senior","vétéran"])','df["classe"] = df.apply(lambda x: "junior" if x<30 else "senior" if x<=50 else "vétéran", axis=1)'],correct:0,expl:'np.select(conditions, valeurs, default) = CASE WHEN multiple en SQL. La 4ème option avec apply/lambda fonctionne aussi.'},
+{id:'p47',elo:920,mode:'py',title:'query()',desc:'Produits dont le prix est supérieur à la <strong>moyenne</strong>.',ctx:null,options:['df.query("prix > @prix_moyen", prix_moyen=df["prix"].mean())','df[df["prix"] > df["prix"].mean()]','df.filter("prix > mean(prix)")','df.where(df["prix"] > df["prix"].mean())'],correct:1,expl:'df[df["prix"] > df["prix"].mean()] est le plus direct. .query() fonctionne aussi avec la variable @. Équivalent de WHERE prix > (SELECT AVG(prix)).'},
+{id:'p48',elo:930,mode:'py',title:'isin() sélection',desc:'Clients dont le client_id <strong>apparaît dans les commandes</strong>.',ctx:null,options:['df_clients[df_clients["id"].isin(df_commandes["client_id"])]','df_clients[df_clients["id"] == df_commandes["client_id"]]','df_clients.filter(df_clients["id"].in(df_commandes["client_id"]))','pd.merge(df_clients, df_commandes, left_on="id", right_on="client_id")'],correct:0,expl:'.isin() = SQL IN. Vérifie si chaque valeur est dans la liste. ~isin() = NOT IN. Plus rapide que merge() pour une simple vérification.'},
+{id:'p49',elo:940,mode:'py',title:'~isin() NOT IN',desc:'Clients qui <strong>n\'ont jamais commandé</strong>.',ctx:null,options:['df_clients[~df_clients["id"].isin(df_commandes["client_id"])]','df_clients[df_clients["id"].not_in(df_commandes["client_id"])]','df_clients[df_clients["id"] != df_commandes["client_id"]]','df_clients.exclude(df_commandes["client_id"])'],correct:0,expl:'~isin() = NOT IN. Le ~ inverse le masque booléen. Équivalent de WHERE id NOT IN (SELECT client_id FROM commandes).'},
+{id:'p50',elo:950,mode:'py',title:'pd.concat()',desc:'Fusionner deux DataFrames <strong>vertikalement</strong> (empiler).',ctx:null,options:['pd.concat([df1, df2])','pd.merge(df1, df2)','df1.append(df2)','pd.stack(df1, df2)'],correct:0,expl:'pd.concat([df1,df2]) empile verticalement. axis=1 pour côte à côte. ignore_index=True réinitialise l\'index.'},
+,
+{id:'c01',elo:400,mode:'sql',title:"Qu'est-ce qu'une base de données ?",desc:"Une base de données relationnelle est :",ctx:null,options:["Un ensemble organisé de données structurées en tables liées entre elles", "Un fichier Excel avec plusieurs onglets", "Un logiciel de visualisation de données", "Un serveur de fichiers accessible en réseau"],correct:0,expl:"Une base de données relationnelle organise les données en tables (lignes + colonnes) reliées par des clés. SQL est le langage pour les interroger."},
+{id:'c02',elo:420,mode:'py',title:"Qu'est-ce qu'une API ?",desc:"Une API (Application Programming Interface) permet de :",ctx:null,options:["Faire communiquer deux applications en échangeant des données via des requêtes", "Créer des graphiques automatiquement depuis un DataFrame", "Accélérer l'exécution du code Python", "Connecter directement deux bases de données SQL"],correct:0,expl:"Une API est une interface qui permet à deux systèmes de communiquer. En data, on l'utilise pour récupérer des données (REST API, JSON) ou envoyer des résultats."},
+{id:'c03',elo:440,mode:'sql',title:"CSV vs JSON",desc:"Quelle est la principale différence entre un fichier CSV et un fichier JSON ?",ctx:null,options:["CSV est tabulaire (lignes/colonnes), JSON est hiérarchique (imbriqué)", "CSV est plus rapide à lire, JSON est plus lent", "JSON est uniquement pour les bases de données, CSV pour Excel", "CSV supporte les données imbriquées, JSON non"],correct:0,expl:"CSV = données plates en tableau. JSON = données structurées avec niveaux d'imbrication. Les APIs retournent souvent du JSON, les exports de tableurs sont souvent en CSV."},
+{id:'c04',elo:450,mode:'py',title:"Qu'est-ce que le nettoyage de données ?",desc:"Le nettoyage de données (data cleaning) consiste à :",ctx:null,options:["Identifier et corriger les erreurs, doublons et valeurs manquantes dans un dataset", "Supprimer toutes les lignes avec des valeurs nulles", "Convertir toutes les colonnes en format texte", "Réduire la taille du fichier pour économiser de l'espace"],correct:0,expl:"Le data cleaning représente souvent 60-80% du travail d'un data analyst. Il inclut : valeurs nulles, doublons, types incorrects, outliers, formats incohérents."},
+{id:'c05',elo:460,mode:'sql',title:"Qu'est-ce qu'un data analyst ?",desc:"Le rôle principal d'un data analyst est de :",ctx:null,options:["Analyser des données pour en extraire des insights et aider à la prise de décision", "Construire et maintenir les infrastructures de données (pipelines, BDD)", "Créer des modèles de machine learning en production", "Administrer les serveurs et bases de données"],correct:0,expl:"Data analyst = analyser et visualiser les données pour répondre à des questions métier. Data engineer = construire les pipelines. Data scientist = modèles prédictifs."},
+{id:'c06',elo:480,mode:'py',title:"Qu'est-ce qu'un DataFrame ?",desc:"Un DataFrame pandas est :",ctx:null,options:["Une structure de données 2D avec des lignes et colonnes étiquetées, comme une table SQL", "Un type de graphique pour visualiser des données tabulaires", "Un fichier de configuration pour pandas", "Une liste de dictionnaires Python"],correct:0,expl:"Un DataFrame = table 2D. Chaque colonne est une Serie pandas. Conceptuellement identique à une table SQL ou un onglet Excel, mais manipulable en Python."},
+{id:'c07',elo:490,mode:'sql',title:"Donnée structurée vs non structurée",desc:"Quelle est la différence entre données structurées et non structurées ?",ctx:null,options:["Structurée = format fixe en tableau (SQL). Non structurée = texte libre, images, vidéos", "Structurée = données en JSON. Non structurée = données en CSV", "Structurée = données dans le cloud. Non structurée = données locales", "Structurée = peu de données. Non structurée = big data"],correct:0,expl:"80% des données mondiales sont non structurées (emails, images, réseaux sociaux). Les BDD relationnelles gèrent les données structurées. Le big data gère les deux."},
+{id:'c08',elo:500,mode:'py',title:"Qu'est-ce qu'un outlier ?",desc:"Un outlier (valeur aberrante) dans un dataset est :",ctx:null,options:["Une valeur qui s'écarte significativement des autres valeurs de la distribution", "Une valeur manquante (NaN)", "Une valeur dupliquée dans la colonne", "Une valeur en dehors de la plage 0-100"],correct:0,expl:"Un outlier peut être une erreur de saisie ou une vraie anomalie. On les détecte avec l'IQR, le z-score ou la visualisation (boxplot). Les garder ou les supprimer dépend du contexte."},
+{id:'c09',elo:510,mode:'sql',title:"OLTP vs OLAP",desc:"Quelle est la différence entre OLTP et OLAP ?",ctx:null,options:["OLTP = transactions quotidiennes en temps réel. OLAP = analyses historiques sur grands volumes", "OLTP = base de données SQL. OLAP = base de données NoSQL", "OLTP = données structurées. OLAP = données non structurées", "OLTP = pour les développeurs. OLAP = pour les data analysts"],correct:0,expl:"OLTP (Online Transaction Processing) : INSERT/UPDATE rapides, données fraîches. OLAP (Online Analytical Processing) : SELECT complexes sur historique. Exemple : ta caisse enregistreuse (OLTP) alimente ton data warehouse (OLAP)."},
+{id:'c10',elo:520,mode:'py',title:"Qu'est-ce que la visualisation de données ?",desc:"La visualisation de données sert principalement à :",ctx:null,options:["Représenter graphiquement les données pour faciliter la compréhension et la prise de décision", "Créer des dashboards pour les développeurs", "Compresser les données pour les stocker plus efficacement", "Automatiser les rapports mensuels"],correct:0,expl:"Une bonne visualisation transforme des chiffres complexes en insights visuels immédiats. Outils : matplotlib/seaborn (Python), Tableau, Power BI, Looker."},
+{id:'c11',elo:550,mode:'sql',title:"Qu'est-ce qu'un ETL ?",desc:"ETL signifie Extract, Transform, Load. Dans quel ordre ces étapes s'appliquent-elles ?",ctx:"On récupère des données brutes d'une source, on les modifie, on les charge en base.",options:["Extract (extraire la source) → Transform (nettoyer/calculer) → Load (charger en destination)", "Load (charger) → Transform (modifier) → Extract (exporter)", "Extract (exporter) → Load (charger) → Transform (analyser)", "Transform (calculer) → Extract (extraire) → Load (livrer)"],correct:0,expl:"ETL = le pipeline data classique. Extract : API, BDD, CSV. Transform : nettoyage, jointures, agrégations. Load : data warehouse, BDD analytique. Outils : dbt, Airflow, Spark."},
+{id:'c12',elo:565,mode:'py',title:"Data warehouse vs Data lake",desc:"Quelle est la différence principale entre un data warehouse et un data lake ?",ctx:null,options:["Data warehouse = données structurées et nettoyées. Data lake = données brutes dans leur format d'origine", "Data warehouse = données locales. Data lake = données dans le cloud", "Data warehouse = pour Python. Data lake = pour SQL", "Data warehouse = peu de données. Data lake = big data uniquement"],correct:0,expl:"Data warehouse (ex: Snowflake, BigQuery) : données transformées, prêtes à analyser. Data lake (ex: S3, Azure Data Lake) : tout stocker brut d'abord. Le data lakehouse combine les deux."},
+{id:'c13',elo:580,mode:'sql',title:"Qu'est-ce qu'un pipeline de données ?",desc:"Un pipeline de données est :",ctx:null,options:["Une série d'étapes automatisées qui déplacent et transforment les données de la source à la destination", "Un script Python qui importe des données CSV", "Un tableau de bord qui affiche les données en temps réel", "Une connexion directe entre deux bases de données"],correct:0,expl:"Un pipeline automatise le flux de données : ingestion → transformation → stockage → consommation. Sans pipeline, on ferait tout manuellement à chaque fois."},
+{id:'c14',elo:595,mode:'py',title:"Batch vs Streaming",desc:"Quelle est la différence entre traitement batch et streaming ?",ctx:null,options:["Batch = traitement par lots planifié (ex: toutes les nuits). Streaming = traitement en temps réel flux par flux", "Batch = traitement rapide. Streaming = traitement lent", "Batch = pour Python. Streaming = pour SQL", "Batch = pour petits volumes. Streaming = pour grands volumes"],correct:0,expl:"Batch : on accumule les données puis on traite (ex: rapport quotidien). Streaming : on traite dès l'arrivée (ex: détection de fraude). Kafka = streaming, Airflow = batch."},
+{id:'c15',elo:610,mode:'sql',title:"Schéma en étoile",desc:"Dans un data warehouse, le schéma en étoile contient :",ctx:null,options:["Une table de faits centrale (métriques) reliée à des tables de dimensions (contexte)", "Une seule grande table avec toutes les données", "Des tables triées par ordre alphabétique", "Des tables organisées en couches hiérarchiques"],correct:0,expl:"Table de faits = ventes, quantités, revenus. Tables de dimensions = clients, produits, dates, géographie. Le schéma en étoile est optimisé pour les requêtes analytiques OLAP."},
+{id:'c16',elo:625,mode:'py',title:"KPI — qu'est-ce que c'est ?",desc:"Un KPI (Key Performance Indicator) est :",ctx:null,options:["Une métrique clé qui mesure la performance d'un objectif business spécifique", "Un type de graphique pour les dashboards", "Une fonction Python pour calculer des statistiques", "Un format de fichier pour les rapports data"],correct:0,expl:"Exemples de KPI : taux de conversion, chiffre d'affaires mensuel, NPS, taux de churn. Un bon KPI est SMART : Spécifique, Mesurable, Atteignable, Réaliste, Temporel."},
+{id:'c17',elo:640,mode:'sql',title:"Data analyst vs Data engineer",desc:"Quelle tâche appartient principalement au data engineer ?",ctx:null,options:["Construire et maintenir les pipelines ETL et l'infrastructure de données", "Créer des dashboards et visualisations pour les équipes métier", "Analyser les données pour répondre à des questions business", "Construire des modèles de machine learning"],correct:0,expl:"Data engineer = infrastructure (pipelines, BDD, ETL). Data analyst = analyse et reporting. Data scientist = modèles prédictifs. Ces rôles collaborent étroitement."},
+{id:'c18',elo:655,mode:'py',title:"À quoi sert dbt ?",desc:"dbt (data build tool) est utilisé pour :",ctx:null,options:["Transformer les données dans le data warehouse avec du SQL versionné et testé", "Visualiser les données en dashboards interactifs", "Collecter des données via des APIs REST", "Entraîner des modèles de machine learning"],correct:0,expl:"dbt = la couche Transform de l'ETL. Tu écris du SQL, dbt le versionne sur Git, teste la qualité des données et documente automatiquement. Outil incontournable du stack data moderne."},
+{id:'c19',elo:700,mode:'sql',title:"Normalisation des données",desc:"La normalisation d'une base de données relationnelle vise à :",ctx:null,options:["Éliminer la redondance des données et garantir l'intégrité en organisant les tables correctement", "Compresser les données pour réduire l'espace de stockage", "Accélérer les requêtes SELECT en dupliquant les données fréquemment utilisées", "Convertir toutes les données en format numérique"],correct:0,expl:"La normalisation (1NF, 2NF, 3NF) élimine les doublons et les dépendances. Une BDD bien normalisée évite les anomalies de mise à jour. Pour l'analytique, on dénormalise parfois pour la performance."},
+{id:'c20',elo:715,mode:'py',title:"Corrélation vs causalité",desc:"La corrélation entre deux variables signifie :",ctx:null,options:["Ces deux variables évoluent ensemble — mais cela ne prouve pas que l'une cause l'autre", "L'une des variables est la cause directe de l'autre", "Ces variables sont identiques dans le dataset", "Les variables ne sont pas liées statistiquement"],correct:0,expl:"Corrélation != causalité. Exemple classique : la consommation de glaces corrèle avec les noyades (les deux augmentent en été, sans lien causal). Toujours questionner le mécanisme."},
+{id:'c21',elo:730,mode:'sql',title:"GDPR et données personnelles",desc:"Dans le cadre du RGPD (GDPR), une donnée personnelle est :",ctx:null,options:["Toute information permettant d'identifier directement ou indirectement une personne physique", "Uniquement le nom et prénom d'une personne", "Les données financières et bancaires uniquement", "Les données stockées sur des serveurs européens"],correct:0,expl:"Données personnelles : nom, email, IP, localisation, cookies... Le RGPD impose : consentement, droit à l'oubli, minimisation des données. Crucial pour tout data analyst en Europe."},
+{id:'c22',elo:745,mode:'py',title:"Machine learning supervisé vs non supervisé",desc:"Un algorithme de machine learning supervisé est entraîné :",ctx:null,options:["Sur des données étiquetées (avec la réponse attendue connue)", "Sur des données sans étiquettes pour découvrir des patterns", "Sans aucune donnée historique", "Uniquement sur des données numériques"],correct:0,expl:"Supervisé (classification, régression) : on connaît la cible (ex: spam/pas spam). Non supervisé (clustering, PCA) : on cherche des structures cachées. Le data analyst utilise surtout le supervisé."},
+{id:'c23',elo:760,mode:'sql',title:"Data lineage",desc:"Le data lineage (traçabilité des données) permet de :",ctx:null,options:["Savoir d'où viennent les données, comment elles ont été transformées et où elles vont", "Trier les données par date de création", "Identifier les données les plus utilisées dans les requêtes", "Créer des sauvegardes automatiques de la base de données"],correct:0,expl:"Le data lineage est essentiel pour la conformité (RGPD), le debugging et la confiance dans les données. Outils : dbt (documentation auto), Apache Atlas, DataHub."},
+{id:'c24',elo:775,mode:'py',title:"Feature engineering",desc:"Le feature engineering en machine learning consiste à :",ctx:null,options:["Créer ou transformer des variables pour améliorer les performances d'un modèle", "Sélectionner le bon algorithme de machine learning", "Nettoyer les données avant l'entraînement", "Évaluer les performances d'un modèle entraîné"],correct:0,expl:"Exemple : transformer une date en \"jour de la semaine\" ou \"est_weekend\". Un bon feature engineering peut améliorer un modèle simple plus qu'un algorithme complexe sur des features brutes."},
+{id:'c25',elo:790,mode:'sql',title:"A/B testing",desc:"Un A/B test est utilisé pour :",ctx:null,options:["Comparer deux variantes (A et B) pour déterminer laquelle performe le mieux sur une métrique", "Tester deux bases de données différentes en parallèle", "Comparer les performances SQL vs Python", "Valider la qualité des données avant un chargement"],correct:0,expl:"L'A/B testing est fondamental en product analytics. Groupe A = contrôle (version actuelle). Groupe B = variante (nouvelle feature). On mesure la différence statistiquement avec un test de significativité."},
+{id:'c26',elo:800,mode:'py',title:"Qu'est-ce que Spark ?",desc:"Apache Spark est principalement utilisé pour :",ctx:null,options:["Traiter de très grands volumes de données en parallèle sur plusieurs machines (cluster)", "Visualiser des données en temps réel", "Remplacer pandas pour les petits datasets", "Créer des APIs REST pour exposer des données"],correct:0,expl:"Spark = pandas à l'échelle des téraoctets. Il distribue les calculs sur un cluster. On l'utilise quand les données ne tiennent pas sur une machine. L'API ressemble à pandas/SQL."},
+{id:'c27',elo:815,mode:'sql',title:"Qu'est-ce que BigQuery ?",desc:"Google BigQuery est :",ctx:null,options:["Un data warehouse cloud serverless qui permet d'analyser des téraoctets de données avec du SQL", "Un outil de visualisation de données de Google", "Un service de stockage de fichiers dans le cloud", "Un moteur de recherche pour les bases de données"],correct:0,expl:"BigQuery, Snowflake, Redshift = les grands data warehouses cloud. Tu écris du SQL standard, eux gèrent l'infrastructure. Facturation à la quantité de données scannées."},
+{id:'c28',elo:830,mode:'py',title:"Qu'est-ce que dask ?",desc:"Dask est une librairie Python qui permet de :",ctx:null,options:["Utiliser l'API pandas sur des datasets plus grands que la RAM en parallélisant les calculs", "Créer des dashboards interactifs en Python", "Remplacer SQL pour les requêtes analytiques", "Entraîner des modèles de deep learning"],correct:0,expl:"Quand pandas plante car le fichier est trop gros, on passe à Dask. L'API est quasi-identique à pandas mais les calculs sont distribués ou parallélisés."},
+{id:'c29',elo:840,mode:'sql',title:"Qu'est-ce que le taux de churn ?",desc:"Le taux de churn (attrition) mesure :",ctx:null,options:["Le pourcentage de clients qui arrêtent d'utiliser un service sur une période donnée", "Le taux de croissance mensuel des revenus", "Le nombre de nouveaux clients par mois", "Le ratio entre clients actifs et inactifs"],correct:0,expl:"Churn = clients perdus / clients totaux. KPI critique pour les SaaS et abonnements. Un churn de 5%/mois = perdre 46% des clients en un an. L'analyser par segment révèle pourquoi les clients partent."},
+{id:'c30',elo:850,mode:'py',title:"Qu'est-ce que le MRR ?",desc:"Le MRR (Monthly Recurring Revenue) est :",ctx:null,options:["Le revenu mensuel récurrent prévisible généré par les abonnements actifs", "La marge brute mensuelle d'une entreprise", "Le nombre de nouveaux utilisateurs par mois", "Le revenu total de l'année divisé par 12"],correct:0,expl:"MRR = métrique clé des SaaS. MRR New + MRR Expansion - MRR Churned = MRR Net. Un data analyst SaaS calcule ces métriques quotidiennement pour piloter la croissance."}
+,
+// ── QUESTIONS TERRAIN DATA ANALYST ──
+{id:'s51',elo:620,mode:'sql',title:"ROUND()",desc:"Comment arrondir le prix à <strong>2 décimales</strong> ?",ctx:"TABLE produits : id, nom, prix",options:["SELECT ROUND(prix, 2) FROM produits", "SELECT TRUNC(prix, 2) FROM produits", "SELECT prix::decimal(10,2) FROM produits", "SELECT FLOOR(prix * 100) / 100 FROM produits"],correct:0,expl:"ROUND(valeur, décimales) arrondit. ROUND(3.14159, 2) = 3.14. Sans 2ème argument, arrondit à l'entier le plus proche."},
+{id:'s52',elo:630,mode:'sql',title:"CONCAT()",desc:"Assembler le prénom et le nom en une seule colonne <strong>nom_complet</strong>.",ctx:"TABLE employes : prenom, nom",options:["SELECT CONCAT(prenom, ' ', nom) AS nom_complet FROM employes", "SELECT prenom + ' ' + nom AS nom_complet FROM employes", "SELECT prenom || ' ' || nom AS nom_complet FROM employes", "SELECT MERGE(prenom, nom) AS nom_complet FROM employes"],correct:0,expl:"CONCAT() assemble des chaînes. L'opérateur || fonctionne aussi (PostgreSQL). + fonctionne en SQL Server."},
+{id:'s53',elo:645,mode:'sql',title:"DATE_TRUNC()",desc:"Grouper les ventes <strong>par mois</strong> avec leurs dates complètes.",ctx:"TABLE ventes : date (timestamp), montant",options:["SELECT DATE_TRUNC('month', date), SUM(montant) FROM ventes GROUP BY DATE_TRUNC('month', date)", "SELECT MONTH(date), SUM(montant) FROM ventes GROUP BY MONTH(date)", "SELECT date::month, SUM(montant) FROM ventes GROUP BY date::month", "SELECT EXTRACT(month FROM date), SUM(montant) FROM ventes GROUP BY 1"],correct:0,expl:"DATE_TRUNC tronque à la précision souhaitée (month, week, day...). Renvoie le premier jour du mois pour chaque date."},
+{id:'s54',elo:658,mode:'sql',title:"COALESCE pour valeur par défaut",desc:"Afficher le montant de remise, ou <strong>0 si NULL</strong>.",ctx:"TABLE commandes : id, montant, remise",options:["SELECT COALESCE(remise, 0) FROM commandes", "SELECT IFNULL(remise, 0) FROM commandes", "SELECT remise OR 0 FROM commandes", "SELECT NVL(remise, 0) FROM commandes"],correct:0,expl:"COALESCE(val, défaut) retourne le premier argument non NULL. Standard SQL. IFNULL() est MySQL, NVL() est Oracle."},
+{id:'s55',elo:670,mode:'sql',title:"EXTRACT()",desc:"Extraire l'<strong>année</strong> d'une colonne date.",ctx:"TABLE commandes : id, date_commande",options:["SELECT EXTRACT(YEAR FROM date_commande) FROM commandes", "SELECT YEAR(date_commande) FROM commandes", "SELECT date_commande::year FROM commandes", "SELECT GET_YEAR(date_commande) FROM commandes"],correct:0,expl:"EXTRACT(YEAR FROM date) est le standard SQL. YEAR() fonctionne en MySQL/SQL Server."},
+{id:'s56',elo:680,mode:'sql',title:"UPPER() LOWER()",desc:"Normaliser les emails en <strong>minuscules</strong>.",ctx:"TABLE clients : id, email",options:["SELECT LOWER(email) FROM clients", "SELECT DOWNCASE(email) FROM clients", "SELECT email.lower() FROM clients", "SELECT TO_LOWER(email) FROM clients"],correct:0,expl:"LOWER() convertit en minuscules, UPPER() en majuscules. Utile pour normaliser les données avant comparaison."},
+{id:'s57',elo:695,mode:'sql',title:"TRIM()",desc:"Supprimer les espaces en début et fin d'une chaîne.",ctx:"nom contient des espaces parasites",options:["SELECT TRIM(nom) FROM clients", "SELECT STRIP(nom) FROM clients", "SELECT CLEAN(nom) FROM clients", "SELECT LTRIM(RTRIM(nom)) FROM clients"],correct:0,expl:"TRIM() supprime les espaces des deux côtés. LTRIM() = gauche. RTRIM() = droite. La réponse 4 fonctionne aussi."},
+{id:'s58',elo:710,mode:'sql',title:"CASE WHEN + agrégation",desc:"Compter les clients <strong>actifs ET inactifs</strong> en une seule requête.",ctx:"TABLE clients : id, statut",options:["SELECT SUM(CASE WHEN statut='actif' THEN 1 ELSE 0 END) AS actifs, SUM(CASE WHEN statut='inactif' THEN 1 ELSE 0 END) AS inactifs FROM clients", "SELECT COUNT(*) WHERE statut='actif' AS actifs FROM clients", "SELECT statut, COUNT(*) FROM clients GROUP BY statut", "SELECT COUNT(statut='actif'), COUNT(statut='inactif') FROM clients"],correct:0,expl:"CASE WHEN dans SUM() = comptage conditionnel. Pattern classique pour des tableaux croisés sans PIVOT. Très utilisé en reporting."},
+{id:'s59',elo:725,mode:'sql',title:"ROW_NUMBER()",desc:"Numéroter les commandes de chaque client par date.",ctx:"TABLE commandes : id, client_id, date, montant",options:["SELECT *, ROW_NUMBER() OVER (PARTITION BY client_id ORDER BY date) AS num FROM commandes", "SELECT *, RANK() OVER (ORDER BY date) AS num FROM commandes", "SELECT *, COUNT(*) OVER (PARTITION BY client_id) AS num FROM commandes", "SELECT *, INDEX() OVER (PARTITION BY client_id ORDER BY date) AS num FROM commandes"],correct:0,expl:"ROW_NUMBER() + PARTITION BY = numérotation indépendante par groupe. Chaque client a ses commandes numérotées 1, 2, 3..."},
+{id:'s60',elo:738,mode:'sql',title:"LAG() pour variation",desc:"Calculer la <strong>variation du CA</strong> vs le mois précédent.",ctx:"TABLE ca_mensuel : mois, ca",options:["SELECT mois, ca, ca - LAG(ca, 1) OVER (ORDER BY mois) AS variation FROM ca_mensuel", "SELECT mois, ca, ca - PREV(ca) OVER (ORDER BY mois) AS variation FROM ca_mensuel", "SELECT mois, ca, DIFF(ca) OVER (ORDER BY mois) AS variation FROM ca_mensuel", "SELECT mois, ca - ca[mois-1] AS variation FROM ca_mensuel"],correct:0,expl:"LAG(colonne, n) accède à la valeur n lignes avant. ca - LAG(ca, 1) = variation vs mois précédent."},
+{id:'s61',elo:752,mode:'sql',title:"Top N par groupe",desc:"Les <strong>3 meilleurs vendeurs par région</strong>.",ctx:"TABLE ventes : vendeur_id, region, ca",options:["SELECT * FROM (SELECT *, ROW_NUMBER() OVER (PARTITION BY region ORDER BY ca DESC) AS rn FROM ventes) t WHERE rn <= 3", "SELECT TOP 3 vendeur_id, region, ca FROM ventes ORDER BY ca DESC", "SELECT vendeur_id, region, ca FROM ventes GROUP BY region LIMIT 3", "SELECT vendeur_id, region, MAX(ca) FROM ventes GROUP BY region, vendeur_id LIMIT 3"],correct:0,expl:"ROW_NUMBER + PARTITION BY + filtre rn <= N = top N par groupe. Fondamental en reporting. RANK() si on veut gérer les ex-aequo."},
+{id:'s62',elo:765,mode:'sql',title:"CTE pour lisibilité",desc:"Utiliser un CTE pour calculer le CA moyen avant de filtrer.",ctx:"Clients dont le CA > moyenne globale",options:["WITH avg_ca AS (SELECT AVG(montant) AS moy FROM commandes) SELECT client_id FROM commandes, avg_ca WHERE montant > avg_ca.moy", "SELECT client_id FROM commandes WHERE montant > AVG(montant)", "WITH (SELECT AVG(montant) AS moy FROM commandes) SELECT client_id FROM commandes WHERE montant > moy", "CTE avg_ca = SELECT AVG(montant) FROM commandes; SELECT client_id WHERE montant > avg_ca"],correct:0,expl:"WITH nom AS (requête) crée un CTE réutilisable. Équivalent à une sous-requête mais plus lisible. La réponse 2 fonctionne aussi ici."},
+{id:'s63',elo:778,mode:'sql',title:"PIVOT manuel CASE WHEN",desc:"Transformer le CA par trimestre en <strong>colonnes</strong>.",ctx:"TABLE ca : trimestre (Q1/Q2/Q3/Q4), montant",options:["SELECT SUM(CASE WHEN trimestre='Q1' THEN montant END) AS Q1, SUM(CASE WHEN trimestre='Q2' THEN montant END) AS Q2, SUM(CASE WHEN trimestre='Q3' THEN montant END) AS Q3, SUM(CASE WHEN trimestre='Q4' THEN montant END) AS Q4 FROM ca", "SELECT PIVOT(montant FOR trimestre) FROM ca", "SELECT trimestre, montant FROM ca PIVOT BY trimestre", "SELECT GROUP_COL(montant, trimestre) FROM ca"],correct:0,expl:"PIVOT manuel avec CASE WHEN + SUM = le plus portable. PIVOT() existe en SQL Server mais pas en PostgreSQL/BigQuery. Ce pattern fonctionne partout."},
+{id:'s64',elo:792,mode:'sql',title:"Incremental load",desc:"Charger uniquement les <strong>nouvelles lignes</strong> depuis la dernière MAJ.",ctx:"TABLE source : id, date_modif\nTABLE cible : id, date_modif",options:["SELECT * FROM source WHERE date_modif > (SELECT MAX(date_modif) FROM cible)", "SELECT * FROM source WHERE id NOT IN (SELECT id FROM cible)", "SELECT * FROM source s LEFT JOIN cible c ON s.id = c.id WHERE c.id IS NULL", "SELECT * FROM source WHERE date_modif = TODAY()"],correct:0,expl:"Incremental load = charger seulement ce qui a changé depuis le dernier chargement. La réponse 1 est la plus simple si date_modif est indexée. Fondamental en ETL."},
+{id:'s65',elo:808,mode:'sql',title:"Déduplication ROW_NUMBER",desc:"Supprimer les <strong>doublons</strong> en gardant la ligne la plus récente.",ctx:"TABLE clients : id, client_id, date_creation",options:["WITH dupes AS (SELECT id, ROW_NUMBER() OVER (PARTITION BY client_id ORDER BY date_creation DESC) AS rn FROM clients) DELETE FROM clients WHERE id IN (SELECT id FROM dupes WHERE rn > 1)", "DELETE FROM clients WHERE COUNT(client_id) > 1", "DELETE FROM clients WHERE id NOT IN (SELECT MIN(id) FROM clients GROUP BY client_id)", "REMOVE DUPLICATES FROM clients ON client_id KEEP LAST"],correct:0,expl:"CTE + ROW_NUMBER + DELETE = pattern le plus précis pour dédupliquer. On numérote les doublons, on garde rn=1 (la plus récente), on supprime les autres."},
+{id:'s66',elo:822,mode:'sql',title:"Taux de rétention SQL",desc:"Calculer le % d'utilisateurs actifs ce mois <strong>qui l'étaient aussi le mois précédent</strong>.",ctx:"TABLE sessions : user_id, mois",options:["SELECT COUNT(DISTINCT CASE WHEN curr.user_id = prev.user_id THEN curr.user_id END) * 100.0 / COUNT(DISTINCT prev.user_id) FROM sessions curr JOIN sessions prev ON curr.user_id = prev.user_id AND curr.mois = prev.mois + 1", "SELECT retained_users / total_users FROM sessions GROUP BY mois", "SELECT COUNT(*) WHERE prev_month = true / COUNT(*) FROM sessions", "SELECT AVG(is_retained) FROM sessions WHERE mois = mois_courant"],correct:0,expl:"Rétention = utilisateurs actifs ce mois ET le mois précédent / utilisateurs actifs le mois précédent. Pattern fondamental en product analytics."},
+{id:'s67',elo:838,mode:'sql',title:"FULL OUTER JOIN",desc:"Tous les clients ET toutes les commandes, même sans correspondance.",ctx:"TABLE clients : id, nom\nTABLE commandes : id, client_id, montant",options:["SELECT nom, montant FROM clients FULL OUTER JOIN commandes ON clients.id = commandes.client_id", "SELECT nom, montant FROM clients CROSS JOIN commandes ON clients.id = commandes.client_id", "SELECT nom, montant FROM clients JOIN commandes ON clients.id = commandes.client_id WHERE clients.id IS NULL", "SELECT nom, montant FROM clients NATURAL JOIN commandes"],correct:0,expl:"FULL OUTER JOIN = toutes les lignes des deux tables avec NULL si pas de correspondance. Utile pour les rapprochements comptables."},
+{id:'s68',elo:855,mode:'sql',title:"UPDATE avec sous-requête",desc:"Mettre à jour le statut des clients <strong>sans commande depuis 1 an</strong>.",ctx:"TABLE clients : id, statut\nTABLE commandes : id, client_id, date",options:["UPDATE clients SET statut = 'inactif' WHERE id NOT IN (SELECT DISTINCT client_id FROM commandes WHERE date > NOW() - INTERVAL '1 year')", "UPDATE clients SET statut = 'inactif' WHERE id IN (SELECT id FROM clients LEFT JOIN commandes ON id = client_id WHERE date IS NULL)", "SET statut = 'inactif' FROM clients WHERE last_order < 1 year", "UPDATE clients, commandes SET statut = 'inactif' WHERE date < NOW() - 365"],correct:0,expl:"UPDATE + NOT IN avec sous-requête = pattern classique pour mettre à jour selon une condition liée à une autre table."},
+{id:'s69',elo:870,mode:'sql',title:"Analyse de cohorte",desc:"Grouper les users par <strong>mois d'inscription</strong> pour analyser leur comportement.",ctx:"TABLE users : id, date_inscription\nTABLE sessions : user_id, date_session",options:["SELECT DATE_TRUNC('month', u.date_inscription) AS cohorte, COUNT(DISTINCT s.user_id) FROM users u LEFT JOIN sessions s ON u.id = s.user_id GROUP BY 1", "SELECT mois, COUNT(*) FROM sessions GROUP BY mois", "SELECT date_inscription, sessions FROM users JOIN sessions ON id = user_id", "SELECT COHORT(date_inscription) FROM users GROUP BY 1"],correct:0,expl:"L'analyse de cohorte groupe les users par date d'acquisition et mesure leur comportement dans le temps. Fondamental pour mesurer la rétention."},
+{id:'p51',elo:620,mode:'py',title:"round()",desc:"Arrondir la colonne prix à <strong>2 décimales</strong>.",ctx:"df avec colonne prix",options:["df['prix'].round(2)", "df['prix'].round_to(2)", "round(df['prix'], 2)", "df['prix'].truncate(2)"],correct:0,expl:".round(n) arrondit à n décimales. Fonctionne sur une Series ou un DataFrame entier. Équivalent de ROUND(prix, 2) en SQL."},
+{id:'p52',elo:630,mode:'py',title:"str accessor lower",desc:"Convertir la colonne email en <strong>minuscules</strong>.",ctx:"df avec colonne email",options:["df['email'].str.lower()", "df['email'].lower()", "df['email'].apply(str.lower)", "Les réponses 1 et 3 sont correctes"],correct:3,expl:".str.lower() est vectorisé (recommandé). .apply(str.lower) fonctionne aussi mais est plus lent. .lower() sans .str ne fonctionne pas sur une Series."},
+{id:'p53',elo:645,mode:'py',title:"resample() mensuel",desc:"Agréger des données par <strong>mois</strong> depuis une colonne datetime.",ctx:"df avec index datetime",options:["df.resample('M').sum()", "df.groupby('M').sum()", "df.aggregate('month').sum()", "df.monthly().sum()"],correct:0,expl:".resample() = groupby temporel. 'M' = mois, 'W' = semaine, 'D' = jour, 'Y' = année. Nécessite que l'index soit en datetime."},
+{id:'p54',elo:658,mode:'py',title:"clip() borner les valeurs",desc:"Limiter les valeurs d'une colonne entre <strong>0 et 100</strong>.",ctx:"df['score'] peut contenir des valeurs hors limites",options:["df['score'].clip(0, 100)", "df['score'].limit(0, 100)", "df['score'].bound(0, 100)", "df['score'].between(0, 100)"],correct:0,expl:".clip(min, max) plafonne les valeurs. Valeur < 0 devient 0, valeur > 100 devient 100. Utile pour nettoyer des données aberrantes."},
+{id:'p55',elo:670,mode:'py',title:"pd.to_datetime()",desc:"Convertir une colonne string en <strong>format datetime</strong>.",ctx:"df['date'] est de type object (string)",options:["pd.to_datetime(df['date'])", "df['date'].to_datetime()", "df['date'].astype(datetime)", "pd.convert_datetime(df['date'])"],correct:0,expl:"pd.to_datetime() convertit strings en datetime. Ajouter format='%Y-%m-%d' si le format est non standard pour accélérer la conversion."},
+{id:'p56',elo:680,mode:'py',title:"str.split() expand",desc:"Séparer la colonne 'nom_complet' en prénom et nom.",ctx:"df['nom_complet'] = 'Alice Dupont'",options:["df['nom_complet'].str.split(' ', expand=True)", "df['nom_complet'].split(' ')", "df['nom_complet'].str.split(' ')", "df.str.split('nom_complet', ' ')"],correct:0,expl:".str.split(sep, expand=True) retourne un DataFrame avec une colonne par partie. Sans expand=True, retourne une Series de listes."},
+{id:'p57',elo:695,mode:'py',title:"duplicated()",desc:"Trouver les lignes <strong>dupliquées</strong> dans un DataFrame.",ctx:null,options:["df[df.duplicated()]", "df[df.is_duplicate()]", "df.find_duplicates()", "df[df.duplicated(keep=False)]"],correct:0,expl:"duplicated() retourne True pour les doublons (sauf le premier). keep=False marque toutes les occurrences. drop_duplicates() les supprime."},
+{id:'p58',elo:710,mode:'py',title:"cut() vs qcut()",desc:"Différence entre pd.cut() et pd.qcut() ?",ctx:null,options:["cut() = intervalles de taille égale. qcut() = intervalles avec effectifs égaux (quantiles)", "cut() = quantiles. qcut() = intervalles égaux", "cut() = pour strings. qcut() = pour nombres", "Aucune différence"],correct:0,expl:"pd.cut(df['age'], bins=[0,18,30,60]) = tranches fixes. pd.qcut(df['age'], q=4) = quartiles. qcut garantit des groupes équilibrés."},
+{id:'p59',elo:722,mode:'py',title:"map() vs apply()",desc:"Différence entre .map() et .apply() sur une Series ?",ctx:null,options:[".map() = élément par élément. .apply() = plus flexible, peut agréger", ".apply() est toujours plus rapide que .map()", ".map() fonctionne sur DataFrame, .apply() sur Series", "Ils sont interchangeables dans tous les cas"],correct:0,expl:".map() = transformation 1:1 sur chaque élément. .apply() est plus flexible. Sur DataFrame, apply() travaille sur des colonnes ou lignes entières."},
+{id:'p60',elo:735,mode:'py',title:"Chaîne pandas lisible",desc:"Filtrer, grouper et trier en <strong>une seule chaîne</strong> propre.",ctx:"df avec colonnes pays, categorie, ventes",options:["(df\n  .query('pays == \"France\"')\n  .groupby('categorie')['ventes'].sum()\n  .sort_values(ascending=False)\n  .head(5))", "df[df.pays=='France'].groupby('categorie')['ventes'].sum().sort_values(ascending=False).head(5)", "df.filter(pays='France').groupby('categorie').sum('ventes').sort().head(5)", "df.where(pays='France').aggregate('categorie','ventes').sort_values().head(5)"],correct:0,expl:"Les parenthèses permettent les retours à la ligne entre les méthodes. Les réponses 1 et 2 donnent le même résultat mais 1 est plus maintenable en production."},
+{id:'p61',elo:748,mode:'py',title:"pd.Categorical mémoire",desc:"Pourquoi convertir une colonne en type Categorical ?",ctx:"df['pays'] a 5 valeurs uniques répétées 10 000 fois",options:["Réduire la mémoire : stocke un entier par valeur unique au lieu du string complet", "Permettre les opérations mathématiques sur les strings", "Créer automatiquement un index sur la colonne", "Trier automatiquement les valeurs alphabétiquement"],correct:0,expl:"10 000 'France' = 10 000 int8 au lieu de 10 000 strings. Gain mémoire massif sur les colonnes à faible cardinalité."},
+{id:'p62',elo:760,mode:'py',title:"assign() pour nouvelles colonnes",desc:"Ajouter deux colonnes calculées en une seule expression.",ctx:"df avec colonnes prix et quantite",options:["df.assign(total=df['prix']*df['quantite'], total_ttc=lambda x: x['total']*1.2)", "df['total']=df['prix']*df['quantite']; df['total_ttc']=df['total']*1.2", "df.add_columns(total=prix*quantite, total_ttc=total*1.2)", "df.pipe(lambda x: x.assign(total=x.prix*x.quantite))"],correct:0,expl:".assign() retourne un nouveau DataFrame. La lambda dans assign() peut référencer les colonnes créées dans le même appel."},
+{id:'p63',elo:773,mode:'py',title:"Gérer les types mixtes",desc:"Une colonne 'prix' contient des strings ET des nombres. Comment convertir ?",ctx:"df['prix'] = ['10.5', 25, '8.0', None, '15']",options:["pd.to_numeric(df['prix'], errors='coerce')", "df['prix'].astype(float)", "df['prix'].apply(float)", "df['prix'].convert_dtypes()"],correct:0,expl:"pd.to_numeric(errors='coerce') convertit ce qui peut l'être et transforme les valeurs impossibles en NaN. astype(float) plante si une valeur ne peut pas être convertie."},
+{id:'p64',elo:785,mode:'py',title:"Colonnes avec trop de nulls",desc:"Afficher les colonnes avec <strong>plus de 20% de valeurs manquantes</strong>.",ctx:null,options:["df.isnull().mean()[df.isnull().mean() > 0.2]", "df.isnull().sum() > 0.2", "df.isna().count() / len(df) > 0.2", "df.null_rate()[df.null_rate() > 20]"],correct:0,expl:"isnull().mean() = taux de null par colonne entre 0 et 1. On filtre ensuite. Pattern essentiel au début de tout EDA."},
+{id:'p65',elo:798,mode:'py',title:"Optimiser la mémoire",desc:"Un DataFrame de 2 Go. Quelle action réduit le plus la mémoire ?",ctx:"colonnes : id (int64), pays (object, 5 valeurs), montant (float64)",options:["df['pays'] = df['pays'].astype('category'); df['id'] = df['id'].astype('int32'); df['montant'] = df['montant'].astype('float32')", "df = df.drop_duplicates()", "df = df.dropna()", "df = df.sample(frac=0.5)"],correct:0,expl:"category + downcast int64/float64 peut réduire 60-70% la mémoire sans perte d'information."},
+{id:'p66',elo:812,mode:'py',title:"Traitement par chunks",desc:"Traiter un CSV de 10 Go par morceaux de 100 000 lignes.",ctx:null,options:["results = []\nfor chunk in pd.read_csv('big.csv', chunksize=100000):\n    results.append(chunk.groupby('pays')['montant'].sum())\npd.concat(results).groupby(level=0).sum()", "pd.read_csv('big.csv', chunksize=100000).groupby('pays')['montant'].sum()", "pd.read_big_csv('big.csv', chunk=100000).aggregate('pays', 'sum')", "pd.chunk('big.csv', 100000).groupby('pays').sum()"],correct:0,expl:"chunksize retourne un itérateur. On traite chaque chunk, on stocke les résultats partiels, puis on les combine. Pattern standard pour les fichiers > RAM."},
+{id:'p67',elo:825,mode:'py',title:"Ordre EDA complet",desc:"Quel est le bon ordre pour un EDA (Exploratory Data Analysis) ?",ctx:null,options:["df.shape puis df.dtypes puis df.isnull().sum() puis df.describe() puis df.corr()", "df.corr() puis df.describe() puis df.isnull().sum() puis df.shape", "df.describe() puis df.shape puis df.corr() puis df.dtypes", "df.head() suffit pour un EDA complet"],correct:0,expl:"L'EDA suit une logique : taille puis types puis valeurs manquantes puis statistiques puis corrélations. shape et dtypes en premier pour comprendre la structure."},
+{id:'p68',elo:838,mode:'py',title:"Joindre avec des NaN dans la clé",desc:"pd.merge() avec une clé contenant des NaN — que se passe-t-il ?",ctx:null,options:["Les NaN ne sont pas joints (NaN != NaN en pandas) — utiliser fillna() avant si nécessaire", "Les NaN sont joints comme des valeurs normales", "Le merge plante avec une erreur KeyError", "Les NaN sont automatiquement exclus du résultat final"],correct:0,expl:"Par défaut pandas ne joint pas les NaN entre eux. Solution : fillna('__NA__') avant le merge, puis nettoyer après."},
+{id:'p69',elo:852,mode:'py',title:"Taux de rétention Python",desc:"Calculer le % d'utilisateurs du mois M présents aussi en M-1.",ctx:"df avec colonnes : user_id, mois",options:["m_curr = set(df[df['mois']==M]['user_id'])\nm_prev = set(df[df['mois']==M-1]['user_id'])\nretention = len(m_curr & m_prev) / len(m_prev)", "df.groupby('mois')['user_id'].count() / df.groupby('mois-1')['user_id'].count()", "df.merge(df, on='user_id').groupby('mois').mean()", "df['retention'] = df['user_id'].duplicated()"],correct:0,expl:"Intersection d'ensembles = utilisateurs présents les deux mois. Division par les users du mois précédent = taux de rétention. Pattern propre et lisible."},
+{id:'p70',elo:865,mode:'py',title:"Détecter les outliers IQR",desc:"Supprimer les lignes dont le montant est en dehors de <strong>1.5 x IQR</strong>.",ctx:null,options:["Q1=df['montant'].quantile(0.25); Q3=df['montant'].quantile(0.75); IQR=Q3-Q1; df_clean=df[(df['montant']>=Q1-1.5*IQR)&(df['montant']<=Q3+1.5*IQR)]", "df_clean=df[df['montant'].between(df['montant'].mean()-2*df['montant'].std(), df['montant'].mean()+2*df['montant'].std())]", "df_clean=df[df['montant']<df['montant'].quantile(0.99)]", "df_clean=df.dropna()"],correct:0,expl:"Méthode IQR = la plus robuste pour détecter les outliers. La méthode mean±2σ suppose une distribution normale. L'IQR est le standard en data analysis."},
+{id:'p71',elo:878,mode:'py',title:"Corrélation vs causalité Python",desc:"df.corr() retourne une valeur de 0.85 entre prix et ventes. Cela signifie :",ctx:null,options:["Prix et ventes évoluent ensemble — mais cela ne prouve pas que le prix cause les ventes", "Le prix cause directement une augmentation des ventes", "Les deux variables sont identiques", "Il n'y a aucune relation entre les deux variables"],correct:0,expl:"Corrélation != causalité. Une corrélation 0.85 montre que les variables bougent ensemble, pas qu'il y a un lien causal. Toujours questionner le mécanisme sous-jacent."},
+{id:'p72',elo:892,mode:'py',title:"Pivot table multi-agrégation",desc:"CA moyen et nombre de commandes par région ET catégorie.",ctx:"df avec colonnes : region, categorie, ca, nb_commandes",options:["df.pivot_table(values=['ca','nb_commandes'], index='region', columns='categorie', aggfunc={'ca':'mean','nb_commandes':'sum'})", "df.groupby(['region','categorie'])[['ca','nb_commandes']].agg(['mean','sum'])", "df.pivot(index='region', columns='categorie', values=['ca','nb_commandes'])", "df.crosstab('region','categorie',values=['ca','nb_commandes'])"],correct:0,expl:"pivot_table avec aggfunc dict permet différentes agrégations par colonne. Très proche du tableau croisé dynamique Excel."},
+{id:'p73',elo:905,mode:'py',title:"Distribution : métriques clés",desc:"Quelle combinaison décrit le mieux une distribution ?",ctx:null,options:["Moyenne, médiane, écart-type, quantiles (25/75%), min, max + histogramme", "Uniquement la moyenne et l'écart-type", "La somme et le count suffisent", "Juste min et max"],correct:0,expl:"Une distribution se comprend par : tendance centrale, dispersion, extrêmes et forme. La médiane résiste aux outliers contrairement à la moyenne."},
+{id:'p74',elo:918,mode:'py',title:"Multicolinéarité",desc:"Pourquoi une forte corrélation entre deux variables <strong>indépendantes</strong> est problématique en régression ?",ctx:null,options:["Elle crée de la multicolinéarité — les coefficients deviennent instables et difficiles à interpréter", "Elle améliore la précision du modèle", "Elle n'a aucun impact sur la régression", "Elle provoque du surapprentissage"],correct:0,expl:"La multicolinéarité rend les coefficients instables. Solution : VIF, PCA, ou supprimer une variable. Problème fréquent en feature engineering."},
+{id:'p75',elo:932,mode:'py',title:"A/B test Python",desc:"Comment comparer statistiquement deux groupes A et B pour valider un A/B test ?",ctx:"group_a = df[df['groupe']=='A']['conversion']\ngroup_b = df[df['groupe']=='B']['conversion']",options:["from scipy import stats; stats.ttest_ind(group_a, group_b)", "group_a.mean() > group_b.mean()", "group_a.corr(group_b)", "group_a.describe().compare(group_b.describe())"],correct:0,expl:"scipy.stats.ttest_ind() = test t de Student pour comparer deux moyennes indépendantes. Si p-value < 0.05, la différence est statistiquement significative. Fondamental en product analytics."}
+];
+
+;
+
+// ══════════════════════════════════════════;
+
+// ══════════════════════════════════════════
+// STATE — ELO SQL + Python séparés
+// ══════════════════════════════════════════
+let P=JSON.parse(localStorage.getItem('dq91_p')||'null');
+let G=JSON.parse(localStorage.getItem('dq91_g')||'null')||{
+  elo:{sql:null,py:null},
+  eloMax:{sql:0,py:0},
+  eloHistory:[],
+  sessions:0,streak:0,lastDate:null,
+  totalCorrect:0,totalQ:0,bestSeries:0,
+  history:{},
+  daily:{}
+};
+
+// Migrate old single-elo saves
+if(G.elo&&typeof G.elo==='number'){
+  const old=G.elo;
+  G.elo={sql:old,py:old};
+  G.eloMax={sql:G.eloMax||old,py:G.eloMax||old};
+}
+
+const saveP=()=>localStorage.setItem('dq91_p',JSON.stringify(P));
+const saveG=()=>localStorage.setItem('dq91_g',JSON.stringify(G));
+
+let mode='sql';
+let curQ=null,seriesCount=0,eloAtStart=0;
+let picked=null,answered=false,isDaily=false;
+let usedIds=new Set();
+const vibe=p=>navigator.vibrate&&navigator.vibrate(p);
+
+// ══════════════════════════════════════════
+// DAILY CHALLENGE
+// ══════════════════════════════════════════
+function getDailyKey(){return new Date().toDateString();}
+function getDailyIndex(){return Math.floor(Date.now()/86400000)%DB.length;}
+function getDailyQ(){
+  const idx=getDailyIndex();
+  return DB[idx];
+}
+
+function renderDaily(){
+  const q=getDailyQ();
+  const key=getDailyKey();
+  const done=G.daily&&G.daily[key];
+  document.getElementById('dc-title').textContent=q?q.title:'Question du jour';
+  document.getElementById('dc-sub').textContent=q?'ELO '+(q.elo)+' · '+(q.mode==='sql'?'SQL':'Python'):'';
+  const btn=document.getElementById('dc-btn');
+  if(done){
+    btn.textContent='Déjà relevé ✓';
+    btn.className='dc-btn done';
+  }else{
+    btn.textContent='Relever le défi →';
+    btn.className='dc-btn';
+  }
+  // Timer until midnight
+  startDailyTimer();
+}
+
+function startDailyTimer(){
+  function update(){
+    const now=new Date();
+    const midnight=new Date(now);midnight.setHours(24,0,0,0);
+    const diff=midnight-now;
+    const h=Math.floor(diff/3600000).toString().padStart(2,'0');
+    const m=Math.floor((diff%3600000)/60000).toString().padStart(2,'0');
+    const s=Math.floor((diff%60000)/1000).toString().padStart(2,'0');
+    const el=document.getElementById('dc-timer');
+    if(el)el.textContent='Nouveau défi dans '+h+'h '+m+'m '+s+'s';
+  }
+  update();setInterval(update,1000);
+}
+
+function startDailyDEPRECATED(){
+  const key=getDailyKey();
+  if(G.daily&&G.daily[key])return;
+  const q=getDailyQ();
+  if(!q)return;
+  isDaily=true;
+  curQ=shuffleOpts(q);
+  picked=null;answered=false;
+  // Open game with daily context
+  const el=document.getElementById('game');
+  el.classList.add('on');requestAnimationFrame(()=>el.classList.add('up'));
+  seriesCount=0;eloAtStart=G.elo[curQ.mode]||400;
+  document.getElementById('gn-elo').textContent=G.elo[curQ.mode]||400;
+  document.getElementById('gn-elo-lbl').textContent='DÉFI DU JOUR';
+  document.getElementById('gn-combo').textContent='⭐ +50';
+  document.getElementById('s-row').innerHTML='';
+  renderQUI(curQ);
+}
+
+// ══════════════════════════════════════════
+// SPLASH
+// ══════════════════════════════════════════
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    const sp=document.getElementById('splash');
+    sp.classList.add('out');
+    setTimeout(()=>{sp.style.display='none';P?showApp():showSetup();},460);
+  },2750);
+});
+function showSetup(){document.getElementById('setup').classList.add('on');}
+function showApp(){
+  document.getElementById('app').classList.add('on');
+  // Migration robuste : ancien format number → {sql, py}
+  if(!G.elo||typeof G.elo==='number'){
+    const o=(typeof G.elo==='number')?G.elo:400;
+    G.elo={sql:o,py:o};
+  }
+  if(!G.eloMax||typeof G.eloMax==='number'){
+    const o=(typeof G.eloMax==='number')?G.eloMax:0;
+    G.eloMax={sql:o,py:o};
+  }
+  if(!G.eloHistory)G.eloHistory=[];
+  if(!G.history)G.history={};
+  // Assurer que les ELO ne sont jamais null
+  if(G.elo.sql===null||G.elo.sql===undefined)G.elo.sql=400;
+  if(G.elo.py===null||G.elo.py===undefined)G.elo.py=400;
+  saveG();renderHome();renderStats();renderProfil();
+}
+
+// ══════════════════════════════════════════
+// SETUP
+// ══════════════════════════════════════════
+let selAv='🦊';
+function pickAv(el){document.querySelectorAll('.av').forEach(a=>a.classList.remove('on'));el.classList.add('on');selAv=el.dataset.av;}
+function setupDone(){
+  const n=document.getElementById('su-name').value.trim()||'Joueur';
+  P={name:n,av:selAv,level:'novice'};saveP();
+  G.elo={sql:400,py:400};
+  G.eloMax={sql:0,py:0};
+  saveG();
+  document.getElementById('setup').classList.remove('on');
+  showApp();
+}
+
+// ══════════════════════════════════════════
+// TABS
+// ══════════════════════════════════════════
+function switchTab(t){
+  ['home','stats','profil'].forEach(n=>{
+    document.getElementById('tab-'+n).className='tab'+(n===t?' on':'');
+    document.getElementById('nav-'+n).className='bnav-btn'+(n===t?' act':'');
+  });
+  if(t==='stats')renderStats();
+  if(t==='profil')renderProfil();
+}
+
+// ══════════════════════════════════════════
+// HOME
+// ══════════════════════════════════════════
+function renderHome(){
+  if(!P||!G.elo||!G.elo.sql)return;
+  // Migration
+  if(typeof G.elo==='number'){const o=G.elo;G.elo={sql:o,py:o};}
+  if(!G.eloMax||typeof G.eloMax==='number'){G.eloMax={sql:G.eloMax||400,py:G.eloMax||400};}
+  const d=new Date();
+  setEl('h-date',d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'}));
+  setEl('h-name',P.name);
+
+  const sqlElo=G.elo.sql||400;
+  const pyElo=G.elo.py||400;
+  const avgElo=Math.round((sqlElo+pyElo)/2);
+
+  // Stats légers : streak / résolues / best série
+  setEl('h-streak',G.streak+' 🔥');
+  setEl('h-total',G.totalCorrect);
+  setEl('h-best',G.bestSeries);
+
+  // Tiers
+  const tr=document.getElementById('tiers-row');
+  if(tr){tr.innerHTML=TIERS.map(t=>{
+    const isCur=avgElo>=t.min&&(!TIERS[TIERS.indexOf(t)+1]||avgElo<TIERS[TIERS.indexOf(t)+1].min);
+    const isDone=!isCur&&avgElo>=t.min;
+    return '<div class="tier-pill'+(isCur?' cur':isDone?' done':'')+'">'+t.name+'</div>';
+  }).join('');}
+
+  setMode(mode);
+}
+
+function setMode(m){
+  mode=m;
+  document.getElementById('ms-sql').className='ms-btn'+(m==='sql'?' act-sql':'');
+  document.getElementById('ms-py').className='ms-btn'+(m==='py'?' act-py':'');
+  document.getElementById('btn-play').className='btn-main '+m;
+}
+
+// ══════════════════════════════════════════
+// STATS
+// ══════════════════════════════════════════
+function renderStats(){
+  if(!G.elo)return;
+  if(typeof G.elo==='number'){const o=G.elo;G.elo={sql:o,py:o};}
+  if(!G.eloMax||typeof G.eloMax==='number'){G.eloMax={sql:G.eloMax||400,py:G.eloMax||400};}
+  const sqlElo=G.elo.sql||400;
+  const pyElo=G.elo.py||400;
+  const avgElo=Math.round((sqlElo+pyElo)/2);
+  const tier=getTier(avgElo);
+  setEl('st-elo',avgElo);
+  setEl('st-tier',tier.name);
+  setElStyle('st-bar','width',Math.min(100,(avgElo-400)/600*100)+'%');
+  setEl('st-sql',sqlElo);
+  setEl('st-py',pyElo);
+  setEl('st-sql-max','Max '+(G.eloMax.sql||400));
+  setEl('st-py-max','Max '+(G.eloMax.py||400));
+  setEl('st-sessions',G.sessions);
+  setEl('st-streak',G.streak+' 🔥');
+  setEl('st-correct',G.totalCorrect);
+  setEl('st-acc',G.totalQ>0?Math.round(G.totalCorrect/G.totalQ*100)+'%':'--');
+  renderEloChart();
+}
+
+function renderEloChart(){
+  const wrap=document.getElementById('elo-chart-wrap');
+  const hist=G.eloHistory||[];
+  if(hist.length<2){
+    wrap.innerHTML='<div style="text-align:center;padding:24px;font-size:13px;color:var(--t3);font-weight:600">Joue quelques sessions pour voir ta progression !</div>';
+    return;
+  }
+  const W=340,H=120,PL=40,PR=14,PT=10,PB=26;
+  const vals=hist.map(h=>h.elo);
+  const minV=Math.max(350,Math.min(...vals)-20);
+  const maxV=Math.min(1050,Math.max(...vals)+20);
+  const range=maxV-minV||1;
+  const pts=hist.map((h,i)=>{
+    const x=PL+(i/(hist.length-1))*(W-PL-PR);
+    const y=PT+(1-(h.elo-minV)/range)*(H-PT-PB);
+    return [x,y];
+  });
+  const pathD=pts.map((p,i)=>i===0?'M'+p[0]+','+p[1]:'L'+p[0]+','+p[1]).join(' ');
+  const areaD=pathD+' L'+pts[pts.length-1][0]+','+(H-PB)+' L'+PL+','+(H-PB)+' Z';
+  const yLabels=[minV,Math.round((minV+maxV)/2),maxV].map(v=>{
+    const y=PT+(1-(v-minV)/range)*(H-PT-PB);
+    return '<text x="'+(PL-5)+'" y="'+(y+4)+'" text-anchor="end" font-size="9" fill="var(--t3)" font-family="JetBrains Mono,monospace">'+v+'</text>';
+  }).join('');
+  const last=pts[pts.length-1];
+  wrap.innerHTML='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block"><defs><linearGradient id="eloGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--acc)" stop-opacity=".18"/><stop offset="100%" stop-color="var(--acc)" stop-opacity="0"/></linearGradient></defs><path d="'+areaD+'" fill="url(#eloGrad)"/><path d="'+pathD+'" stroke="var(--acc)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'+yLabels+'<circle cx="'+last[0]+'" cy="'+last[1]+'" r="4" fill="var(--acc)" stroke="var(--s1)" stroke-width="2"/><text x="'+(last[0]+6)+'" y="'+(last[1]+4)+'" font-size="10" font-weight="700" fill="var(--acc)" font-family="JetBrains Mono,monospace">'+hist[hist.length-1].elo+'</text></svg>';
+}
+
+function renderActivityBars(){
+  const el=document.getElementById('act-bars');el.innerHTML='';
+  const today=new Date();
+  for(let i=6;i>=0;i--){
+    const d=new Date(today);d.setDate(today.getDate()-i);
+    const key=d.toDateString();
+    const hist=G.history[key];
+    const cnt=hist?hist.cnt:0;const m=hist?hist.mode:'none';
+    const h=cnt>0?Math.max(14,Math.min(100,cnt*12)):0;
+    el.innerHTML+='<div class="act-bw"><div class="act-bo"><div class="act-bi '+(cnt>0?m:'none')+'" style="height:'+h+'%"></div></div><div class="act-d'+(i===0?' tod':'')+'">'+DAYS[d.getDay()]+'</div></div>';
+  }
+}
+
+// ══════════════════════════════════════════
+// PROFIL
+// ══════════════════════════════════════════
+function renderProfil(){
+  if(!P||!G.elo)return;
+  if(typeof G.elo==='number'){const o=G.elo;G.elo={sql:o,py:o};}
+  if(!G.eloMax||typeof G.eloMax==='number'){G.eloMax={sql:G.eloMax||400,py:G.eloMax||400};}
+  const sqlElo=G.elo.sql||400;
+  const pyElo=G.elo.py||400;
+  const avgElo=Math.round((sqlElo+pyElo)/2);
+  const tier=getTier(avgElo);
+  setEl('pr-av',P.av);
+  setEl('pr-name',P.name);
+  setEl('pr-sub',tier.name+' · SQL '+sqlElo+' · Python '+pyElo);
+  setEl('pr-sql',sqlElo);
+  setEl('pr-py',pyElo);
+  setEl('pr-best',G.bestSeries);
+  setEl('pr-sql-max',G.eloMax.sql||400);
+  setEl('pr-py-max',G.eloMax.py||400);
+  setEl('pr-solved',G.totalCorrect);
+  setEl('pr-sessions',G.sessions);
+  setEl('pr-streak',G.streak+' 🔥');
+  const dailyDone=Object.keys(G.daily||{}).length;
+  const conds=[
+    G.eloMax&&(G.eloMax.sql||0)>=600,        // bd0 SQL 600
+    G.eloMax&&(G.eloMax.py||0)>=600,          // bd1 Py 600
+    G.eloMax&&(G.eloMax.sql||0)>=800,         // bd2 SQL 800
+    G.eloMax&&(G.eloMax.py||0)>=800,          // bd3 Py 800
+    Math.max(G.eloMax&&G.eloMax.sql||0,G.eloMax&&G.eloMax.py||0)>=1000, // bd4 ELO 1000
+    G.bestSeries>=10,                          // bd5 Série 10
+    G.bestSeries>=20,                          // bd6 Série 20
+    G.totalCorrect>=50,                        // bd7 50 résolues
+    G.totalCorrect>=100,                       // bd8 100 résolues
+    G.streak>=7,                               // bd9 7 jours
+    G.streak>=30,                              // bd10 30 jours
+    Math.max(G.eloMax&&G.eloMax.sql||0,G.eloMax&&G.eloMax.py||0)>=950  // bd11 Master
+  ];
+  conds.forEach((c,i)=>setElClass('bd'+i,'bdg'+(c?' on':'')));
+}
+
+// ══════════════════════════════════════════
+// GAME
+// ══════════════════════════════════════════
+function startGame(){
+  if(!G.elo)return;
+  isDaily=false;
+  seriesCount=0;eloAtStart=G.elo[mode];usedIds=new Set();
+  const tk=new Date().toDateString();
+  if(G.lastDate!==tk){
+    const yest=new Date(Date.now()-86400000).toDateString();
+    G.streak=G.lastDate===yest?G.streak+1:1;G.lastDate=tk;saveG();
+  }
+  const el=document.getElementById('game');
+  el.classList.add('on');requestAnimationFrame(()=>el.classList.add('up'));
+  el.className=''; // reset fire mode
+  el.classList.add('on','up');
+  document.getElementById('gn-elo').textContent=G.elo[mode];
+  document.getElementById('gn-elo-lbl').textContent='ELO '+(mode==='sql'?'SQL':'Python');
+  updateCombo();updateSeriesDots();
+  loadNextQ();
+}
+
+function quitGame(){
+  if(!isDaily){
+    G.sessions++;
+    if(!G.eloHistory)G.eloHistory=[];
+    const avgElo=Math.round(((G.elo.sql||400)+(G.elo.py||400))/2);
+    G.eloHistory.push({session:G.sessions,elo:avgElo});
+    if(G.eloHistory.length>60)G.eloHistory=G.eloHistory.slice(-60);
+    G.lastElo={sql:G.elo.sql,py:G.elo.py};
+  }
+  saveG();
+  const el=document.getElementById('game');
+  el.classList.remove('up');setTimeout(()=>{el.className='';el.classList.add('on');setTimeout(()=>el.classList.remove('on'),20);},320);
+  isDaily=false;
+  renderHome();renderStats();renderProfil();
+}
+
+function updateCombo(){
+  const el=document.getElementById('gn-combo');
+  el.textContent='✦ '+seriesCount;
+  if(seriesCount>0){el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop');}
+  // Fire mode at 5+
+  const game=document.getElementById('game');
+  const banner=document.getElementById('fire-banner');
+  if(seriesCount>=5){
+    game.classList.add('fire-mode');
+    banner.textContent=seriesCount>=10?'🔥🔥 En feu ! '+seriesCount+'x':'🔥 En feu ! '+seriesCount+'x';
+  }else{
+    game.classList.remove('fire-mode');
+  }
+}
+
+function updateSeriesDots(){
+  const bar=document.getElementById('s-row');bar.innerHTML='';
+  const show=Math.min(seriesCount+1,16);
+  for(let i=0;i<show;i++){
+    const d=document.createElement('div');
+    d.className='s-dot'+(i<seriesCount?' ok':' cur');
+    bar.appendChild(d);
+  }
+}
+
+function pickNextQ(){
+  if(isDaily)return null;
+  const elo=G.elo[mode]||400;
+  let pool=DB.filter(q=>q.mode===mode&&!usedIds.has(q.id)&&Math.abs(q.elo-elo)<=150);
+  if(!pool.length)pool=DB.filter(q=>q.mode===mode&&!usedIds.has(q.id));
+  if(!pool.length)return null;
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
+function shuffleOpts(q){
+  const correct=q.options[q.correct];
+  const wrong=q.options.filter((_,i)=>i!==q.correct);
+  for(let i=wrong.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[wrong[i],wrong[j]]=[wrong[j],wrong[i]];}
+  const pos=Math.floor(Math.random()*4);
+  const result=[];let wi=0;
+  for(let i=0;i<4;i++){if(i===pos)result.push(correct);else result.push(wrong[wi++]);}
+  return {...q,options:result,correct:pos};
+}
+
+function renderQUI(q){
+  document.getElementById('q-tag').textContent=q.mode==='sql'?'SQL':'Python';
+  document.getElementById('q-tag').className='q-tag '+q.mode;
+  document.getElementById('q-elo-tag').textContent='ELO '+q.elo;
+  document.getElementById('q-title').textContent=q.title;
+  document.getElementById('q-desc').innerHTML=q.desc;
+  const ctx=document.getElementById('q-ctx');
+  if(q.ctx){ctx.textContent=q.ctx;ctx.style.display='block';ctx.className='q-ctx '+q.mode;}
+  else ctx.style.display='none';
+  [0,1,2,3].forEach(i=>{
+    const o=document.getElementById('o'+i);
+    const t=document.getElementById('ot'+i);
+    t.textContent=q.options[i];
+    o.className='opt';o.disabled=false;
+    setTimeout(()=>o.classList.add('vis'),40+i*55);
+  });
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('btn-verify').disabled=false;
+  document.getElementById('btn-verify').textContent='Vérifier';
+  document.getElementById('btn-verify').className='btn-verify '+q.mode;
+  document.getElementById('btn-next').style.display='block';
+  document.getElementById('btn-next').textContent='Passer →';
+  document.getElementById('btn-next').onclick=skipQ;
+}
+
+function loadNextQ(){
+  const raw=pickNextQ();
+  if(!raw){showToast('Toutes vues !','var(--ok)');quitGame();return;}
+  curQ=shuffleOpts(raw);
+  usedIds.add(curQ.id);
+  picked=null;answered=false;
+  renderQUI(curQ);
+}
+
+function pick(i){
+  if(answered)return;
+  picked=i;
+  [0,1,2,3].forEach(j=>document.getElementById('o'+j).className='opt vis'+(j===i?' picked':''));
+  vibe(8);
+}
+
+function verify(){
+  if(answered||picked===null)return;
+  answered=true;
+  const ok=picked===curQ.correct;
+  const m=isDaily?curQ.mode:mode;
+  const oldElo=G.elo[m]||400;
+  const rawNew=calcElo(oldElo,curQ.elo,ok,G.totalQ);
+  const newElo=Math.max(400,Math.min(1000,rawNew));
+  const delta=newElo-oldElo;
+  const BONUS=isDaily&&ok?50:0;
+
+  [0,1,2,3].forEach(i=>{
+    const el=document.getElementById('o'+i);el.disabled=true;
+    if(i===curQ.correct)el.className='opt vis correct';
+    else if(i===picked&&!ok)el.className='opt vis wrong';
+    else el.className='opt vis';
+  });
+  document.getElementById('feedback').className='feedback '+(ok?'ok':'ko');
+  document.getElementById('fb-head').textContent=ok?'Correct !':'Pas tout à fait…';
+  document.getElementById('fb-body').textContent=curQ.expl;
+  const dStr=(delta>=0?'+':'')+delta+(BONUS?' + ⭐+'+BONUS+' bonus':'');
+  document.getElementById('fb-elo').textContent=dStr+' ELO';
+  document.getElementById('btn-verify').disabled=true;
+  document.getElementById('btn-next').style.display='block';
+  document.getElementById('btn-next').textContent='Continuer →';
+  document.getElementById('btn-next').onclick=isDaily?endDaily:nextQ;
+
+  const finalElo=newElo+(ok?BONUS:0);
+  G.elo[m]=Math.min(1000,finalElo);
+  if(G.elo[m]>(G.eloMax[m]||0))G.eloMax[m]=G.elo[m];
+  G.totalQ++;
+
+  // Animate ELO counter
+  animateElo('gn-elo',oldElo,G.elo[m],600);
+  document.getElementById('gn-elo').className='gn-elo '+(ok?'ok-f':'err-f');
+  setTimeout(()=>document.getElementById('gn-elo').className='gn-elo',900);
+
+  if(ok){
+    seriesCount++;G.totalCorrect++;
+    if(seriesCount>G.bestSeries)G.bestSeries=seriesCount;
+    vibe(seriesCount>=10?[40,20,40,20,40,20,40]:seriesCount>=5?[40,20,40,20,40]:[30]);
+    confetti();
+    showToast('+'+(delta>0?delta:1)+(BONUS?' +'+BONUS:''),'var(--ok)');
+    const prevTier=getTier(oldElo).name;
+    if(getTier(G.elo[m]).name!==prevTier)setTimeout(()=>showRankUp(getTier(G.elo[m]),m),900);
+  }else{
+    vibe([80,40,80]);
+    showToast(String(delta),'var(--err)');
+  }
+  updateCombo();updateSeriesDots();
+  const tk=new Date().toDateString();
+  if(!G.history[tk])G.history[tk]={cnt:0,mode:m};
+  G.history[tk].cnt++;
+  saveG();
+}
+
+function endDaily(){
+  const key=getDailyKey();
+  if(!G.daily)G.daily={};
+  G.daily[key]=true;
+  saveG();quitGame();
+}
+
+function nextQ(){loadNextQ();updateSeriesDots();}
+function skipQ(){
+  if(curQ)usedIds.add(curQ.id);
+  document.getElementById('feedback').className='feedback';
+  loadNextQ();updateSeriesDots();
+}
+
+// ══════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════
+function showToast(msg,bg,dur){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.style.background=bg||'var(--t1)';
+  const d=dur||1400;
+  t.style.display='block';t.style.animation='none';
+  requestAnimationFrame(()=>{t.style.animation='toastAnim '+(d/1000+0.1)+'s ease forwards';setTimeout(()=>t.style.display='none',d+100);});
+}
+function showRankUp(tier,m){
+  const modeStr=m?(' en '+m.toUpperCase()):'';
+  showToast('🏆 '+tier.name+modeStr,'var(--acc)',2800);
+}
+function closeModal(){document.getElementById('modal').className='overlay';}
+function confetti(){
+  const w=document.getElementById('cw');
+  const cols=['#5E5CE6','#2563EB','#16A34A','#DC2626','#D97706','#8B5CF6'];
+  for(let i=0;i<18;i++){
+    const el=document.createElement('div');el.className='cf';
+    el.style.cssText='left:'+Math.random()*100+'%;background:'+cols[~~(Math.random()*cols.length)]+';animation-duration:'+(0.65+Math.random()*0.8)+'s;animation-delay:'+Math.random()*0.3+'s';
+    w.appendChild(el);setTimeout(()=>el.remove(),1500);
+  }
+}
+function confirmReset(){
+  if(confirm('Réinitialiser ton profil ? Tous tes ELO et statistiques seront perdus définitivement.')){
+    try{
+      ['dq91_p','dq91_g','dq8_p','dq8_g','dq_game','dq9_p','dq9_g'].forEach(k=>localStorage.removeItem(k));
+      localStorage.clear();
+    }catch(e){}
+    location.href=location.href.split('?')[0]+'?reset='+Date.now();
+  }
+}
+
+</script>
+</body>
+</html>
